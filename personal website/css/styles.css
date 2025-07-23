@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
 html{
     background-color: #90EE90;
 }
@@ -7,6 +9,8 @@ header{
     justify-content: space-between;
     align-items: center;
     background-color: antiquewhite;
+    padding: 8px;
+    border-radius: 20px;
 }
 
 h1{
@@ -38,9 +42,16 @@ nav li{
 nav a{
     text-decoration: none;
     color: black;
+    transition: color 0.3s ease;
+}
+
+nav a:hover {
+    color: #00853E;
 }
 
 body{
+    font-family: 'Lato', sans-serif;
+    color: #333;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -61,7 +72,7 @@ footer{
 
 #hero {
     display: flex;
-    background-color: #4cd04c;
+    background-color: #00853E;
     border-radius: 20px;
     flex-direction: column;
     align-items: center;
@@ -83,4 +94,10 @@ footer{
 #intro{
     display: flex;
     padding: 5%;
+}
+
+#home-portrait{
+    display: flex;
+    width: 18%;
+    border-radius: 20px;
 }
