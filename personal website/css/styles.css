@@ -20,11 +20,6 @@ h2{
     font-size: large;
 }
 
-#intro{
-    display: flex;
-    padding: 5%;
-}
-
 nav ul{
     display: flex;
     list-style: none;
@@ -59,4 +54,28 @@ footer{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+
+#hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5%;
+    min-height: 60vh;
+}
+
+#work-button{
+    display: flex;
+    width: 30%;
+    height: 10vh;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+}
+
+#intro{
+    display: flex;
+    padding: 5%;
 }
