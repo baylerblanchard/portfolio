@@ -101,7 +101,7 @@ main {
 
 footer {
     background-color: var(--surface-color);
-    color: var(--surface-color);
+    color: var(--primary-color);
     text-align: center;
     padding: 1.5rem 0;
     margin-top: auto;
@@ -113,8 +113,18 @@ footer {
     align-items: center;
     justify-content: space-between;
     gap: 2rem;
-    flex-wrap: wrap-reverse; /* On smaller screens, image will be on top */
+    flex-wrap: wrap;
     padding: 2rem 0;
+}
+.hero-image {
+    flex: 1;
+    min-width: 250px; /* Give it a minimum width */
+    max-width: 300px; /* And a maximum width */
+    height: auto;
+    border-radius: var(--border-radius);
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+    box-shadow: var(--shadow);
 }
 
 .hero-text {
@@ -148,15 +158,6 @@ footer {
 .hero-text p {
     font-size: 1.1rem;
     margin-bottom: 2rem;
-}
-
-.hero-image {
-    width: 25%;
-    height: auto;
-    border-radius: var(--border-radius);
-    object-fit: cover;
-    border: 2px solid var(--primary-color);
-    box-shadow: var(--shadow);
 }
 
 .cta-button {
@@ -431,6 +432,20 @@ footer {
 
 .hamburger::before { top: 6px; }
 .hamburger::after { bottom: 6px; }
+
+/* Animate hamburger to X */
+.nav-toggle.is-active .hamburger {
+    transform: rotate(45deg);
+}
+
+.nav-toggle.is-active .hamburger::before {
+    transform: rotate(90deg);
+    top: 0;
+}
+
+.nav-toggle.is-active .hamburger::after {
+    opacity: 0;
+}
 
 @media (max-width: 768px) {
     header {
