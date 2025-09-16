@@ -3,7 +3,7 @@
 /* CSS Variables for a consistent theme */
 :root {
     --primary-color: #4E9A06; /* Terminal Green */
-    --secondary-color: #729FCF; /* A calm blue for links */
+    --secondary-color: #66ad4c; /* A calm blue for links */
     --background-color: #1e1e1e; /* Dark background */
     --surface-color: #2d2d2d; /* Slightly lighter dark for surfaces */
     --text-color: #d4d4d4; /* Light gray text */
