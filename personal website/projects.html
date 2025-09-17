@@ -5,11 +5,17 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="css/styles.css" />
-        <title>Bayler Blanchard</title>
+        <title>Projects | Bayler Blanchard</title>
     </head>
     <body>
         <header>
         <h1>Bayler Blanchard</h1>
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox" />
+                <div class="slider round"></div>
+            </label>
+        </div>
         <nav>
             <button class="nav-toggle" aria-label="toggle navigation">
                 <span class="hamburger"></span>
@@ -22,8 +28,24 @@
             </ul>
         </nav>
     </header>
+    <main class="container">
+        <section id="work">
+            <h2>My Projects</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <img src="images/iot-dashboard-placeholder.png" alt="IoT Control Panel Screenshot" class="project-image">
+                    <h4>IoT Remote Control Web Application</h4>
+                    <p class="project-description">
+                        A collaborative university project to create a secure web application for remotely managing and monitoring various IoT devices. The system provided a centralized dashboard to view a live camera feed, adjust a smart thermostat, and control a remote door lock, enhancing smart home management capabilities.
+                    </p>
+                    <!-- If you have a link to the project or its code, you can add it here -->
+                    <!-- <a href="#" class="project-link">View Project</a> -->
+                </div>
+            </div>
+        </section>
+    </main>
     <footer>
-        <p id="footer">&copy; 2025 Bayler Blanchard</p>
+        <p>&copy; 2025 Bayler Blanchard</p>
     </footer>
     <script src="js/main.js"></script>
     </body>

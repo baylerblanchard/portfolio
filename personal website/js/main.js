@@ -23,3 +23,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// --- Theme Switcher ---
+const themeToggle = document.querySelector('#checkbox');
+
+const applyTheme = (theme) => {
+    if (theme === 'light') {
+        document.body.classList.add('light-mode');
+        themeToggle.checked = true;
+    } else {
+        document.body.classList.remove('light-mode');
+        themeToggle.checked = false;
+    }
+};
+
+// Check for saved theme in localStorage and apply it
+const currentTheme = localStorage.getItem('theme') || 'dark';
+applyTheme(currentTheme);
+
+themeToggle.addEventListener('change', () => {
+    const newTheme = themeToggle.checked ? 'light' : 'dark';
+    localStorage.setItem('theme', newTheme);
+    applyTheme(newTheme);
+});
