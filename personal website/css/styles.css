@@ -12,8 +12,8 @@
 }
 
 body.light-mode {
-    --primary-color: #005f5f; /* A darker teal for contrast */
-    --secondary-color: #008787; /* A brighter teal for links */
+    --primary-color: #4E9A06; /* A darker teal for contrast */
+    --secondary-color: #66ad4c; /* A brighter teal for links */
     --background-color: #f4f4f4; /* Light gray background */
     --surface-color: #ffffff; /* White for surfaces */
     --text-color: #333333; /* Dark gray text */
@@ -53,6 +53,12 @@ header {
     position: sticky;
     top: 0;
     z-index: 100;
+}
+
+.header-content-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
 }
 
 h1, h2, h3, h4 {
@@ -411,7 +417,7 @@ footer {
 
 .theme-switch {
     position: relative;
-    display: inline-block;
+    display: flex;
     width: 50px;
     height: 24px;
 }
@@ -514,6 +520,12 @@ input:checked + .slider:before {
     header {
         flex-direction: column;
         align-items: flex-start;
+    }
+    
+    .header-content-left {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
     }
 
     #hero {
