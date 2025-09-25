@@ -2,21 +2,21 @@
 
 /* CSS Variables for a consistent theme */
 :root {
-    --primary-color: #4E9A06; /* Terminal Green */
-    --secondary-color: #66ad4c; /* A calm blue for links */
-    --background-color: #1e1e1e; /* Dark background */
-    --surface-color: #2d2d2d; /* Slightly lighter dark for surfaces */
-    --text-color: #d4d4d4; /* Light gray text */
-    --border-radius: 0; /* Square corners */
-    --shadow: none; /* No shadows for a flat look */
-}
-
-body.light-mode {
     --primary-color: #4E9A06; /* A darker teal for contrast */
     --secondary-color: #66ad4c; /* A brighter teal for links */
     --background-color: #f4f4f4; /* Light gray background */
     --surface-color: #ffffff; /* White for surfaces */
     --text-color: #333333; /* Dark gray text */
+    --border-radius: 0; /* Square corners */
+    --shadow: none; /* No shadows for a flat look */
+}
+
+html.dark {
+    --primary-color: #4E9A06; /* Terminal Green */
+    --secondary-color: #66ad4c; /* A calm blue for links */
+    --background-color: #1e1e1e; /* Dark background */
+    --surface-color: #2d2d2d; /* Slightly lighter dark for surfaces */
+    --text-color: #d4d4d4; /* Light gray text */
 }
 
 
@@ -330,6 +330,7 @@ footer {
     border-radius: var(--border-radius);
     width: 100%;
     background-color: var(--background-color);
+    box-sizing: border-box; /* Ensures padding doesn't add to the width */
     color: var(--text-color);
     max-width: 600px;
 }
@@ -451,16 +452,63 @@ footer {
     transition: .4s;
 }
 
-input:checked + .slider {
+input:not(:checked) + .slider {
     background-color: var(--background-color);
 }
 
-input:checked + .slider:before {
+input:not(:checked) + .slider:before {
     transform: translateX(26px);
 }
 
 .slider.round { border-radius: 34px; }
 .slider.round:before { border-radius: 50%; }
+
+.theme-switcher {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: var(--primary-color);
+}
+
+.theme-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* Icon transition styles */
+.sun-and-moon > .sun {
+    transform-origin: center center;
+    transition: transform 0.5s cubic-bezier(0.5, 1.5, 0.5, 1.5);
+}
+
+.sun-and-moon > .moon {
+    transform-origin: center center;
+    transition: transform 0.5s cubic-bezier(0.5, 1.5, 0.5, 1.5);
+    fill: var(--primary-color);
+}
+
+html:not(.dark) .sun-and-moon > .sun {
+    transform: scale(1.75);
+}
+
+html:not(.dark) .sun-and-moon > .moon {
+    transform: scale(0);
+    fill: transparent;
+}
+
+html.dark .sun-and-moon > .sun {
+    transform: rotate(360deg) scale(0);
+}
+
+html.dark .sun-and-moon > .moon {
+    transform: rotate(0deg);
+}
+
+/* Hide the checkbox visually but keep it accessible */
+#checkbox {
+    display: none;
+}
 
 /* --- Media Queries for Responsiveness --- */
 

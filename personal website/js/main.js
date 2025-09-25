@@ -24,50 +24,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// --- Theme Switcher ---
-const themeToggle = document.querySelector('#checkbox');
-
-const applyTheme = (theme) => {
-    if (theme === 'light') {
-        document.body.classList.add('light-mode');
-        themeToggle.checked = true;
-    } else {
-        document.body.classList.remove('light-mode');
-        themeToggle.checked = false;
-    }
-};
-
-// Check for saved theme in localStorage and apply it
-const currentTheme = localStorage.getItem('theme') || 'dark';
-applyTheme(currentTheme);
-
-themeToggle.addEventListener('change', () => {
-    const newTheme = themeToggle.checked ? 'light' : 'dark';
-    localStorage.setItem('theme', newTheme);
-    applyTheme(newTheme);
-});
-
     // Get the button element
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     // Get the html element to toggle the 'dark' class
-    const htmlElement = document.documentElement;
+    const htmlElement = document.documentElement; 
+    const checkbox = document.getElementById('checkbox');
 
     // Check for saved theme preference in localStorage, or use system preference
-    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    const isDarkMode = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    if (isDarkMode) {
         htmlElement.classList.add('dark');
+        if(checkbox) checkbox.checked = false;
     } else {
         htmlElement.classList.remove('dark');
+        if(checkbox) checkbox.checked = true;
     }
 
     // Add click event listener to the button
     themeToggleBtn.addEventListener('click', () => {
         // Toggle the 'dark' class
-        htmlElement.classList.toggle('dark');
+        const isDark = htmlElement.classList.toggle('dark');
         
         // Save the user's preference to localStorage
-        if (htmlElement.classList.contains('dark')) {
+        if (isDark) {
             localStorage.setItem('theme', 'dark');
+            if(checkbox) checkbox.checked = false;
         } else {
             localStorage.setItem('theme', 'light');
+            if(checkbox) checkbox.checked = true;
         }
     });
