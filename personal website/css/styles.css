@@ -607,6 +607,7 @@ html.dark .sun-and-moon > .moon {
         right: 0;
         top: 100%; /* Position below the header */
         box-shadow: var(--shadow);
+        border-bottom: 1px solid var(--primary-color);
         text-align: center;
     }
 
