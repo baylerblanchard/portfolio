@@ -267,6 +267,12 @@ footer {
     box-shadow: var(--shadow);
 }
 
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
 .project-card {
     background-color: var(--background-color);
     border-radius: var(--border-radius);
@@ -651,6 +657,7 @@ html.dark .sun-and-moon > .moon {
 
     .skill-category {
         width: 100%;
+        box-sizing: border-box; /* Ensures padding is included in the width */
     }
 
     #work .project-card {
@@ -702,6 +709,7 @@ html.dark .sun-and-moon > .moon {
 
     .skill-category {
         width: 100%;
+        box-sizing: border-box; /* Ensures padding is included in the width */
     }
 
     #work .project-card {
