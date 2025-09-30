@@ -317,6 +317,15 @@ footer {
     color: var(--primary-color);
 }
 
+/* --- 404 Page Specific Styles --- */
+.error-code {
+    font-size: 10rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+    opacity: 0.5;
+    margin-bottom: 0;
+}
+
 /* --- Contact Page Specific Styles --- */
 
 #contact {
