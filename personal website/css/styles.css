@@ -739,3 +739,14 @@ html.dark .sun-and-moon > .moon {
         font-size: 0.9rem;
     }
 }
+
+@media (max-width: 768px) {
+    #hero {
+        flex-direction: column; /* Stack items vertically */
+        text-align: center;    /* Center-align the text for a better mobile look */
+    }
+
+    .hero-image {
+        margin-top: 2rem; /* Add some space between the text and the image */
+    }
+}
