@@ -269,7 +269,7 @@ footer {
 
 .project-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 1.5rem;
 }
 
@@ -293,6 +293,12 @@ footer {
     margin-bottom: 18px;
 }
 
+.project-image-gallery {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap; /* Allows images to stack on smaller screens */
+}
+
 .project-image {
     width: 100%;
     border-radius: var(--border-radius);
@@ -306,7 +312,6 @@ footer {
 
 .project-link {
     display: inline-block;
-    margin-top: 1rem;
     text-decoration: underline;
     color: var(--text-color);
     font-weight: 700;
@@ -678,6 +683,11 @@ html.dark .sun-and-moon > .moon {
         object-fit: cover;
     }
 
+    .project-image-gallery .project-image {
+        flex-basis: 100%; /* Make each image take full width on smaller screens */
+        width: 100%;
+    }
+
     #contact .contact-form {
         width: 100%;
     }
@@ -728,6 +738,11 @@ html.dark .sun-and-moon > .moon {
     #work .project-image {
         height: 150px;
         object-fit: cover;
+    }
+
+    .project-image-gallery .project-image {
+        flex-basis: 100%; /* Ensure stacking on very small screens too */
+        width: 100%;
     }
 
     #contact .contact-form input,
