@@ -4,7 +4,7 @@ This repository contains the source code for my personal portfolio website, desi
 
 ## 🚀 Live Demo
 <!-- Replace the # below with your actual GitHub Pages link or Vercel link -->
-[View Live Site](#)
+[View Live Site](baylerblanchard.com)
 
 ## 🛠 Technologies Used
 
