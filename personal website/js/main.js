@@ -13,12 +13,14 @@ navToggle.addEventListener('click', () => {
 
 // Add active class to current page link
 document.addEventListener('DOMContentLoaded', () => {
-    const currentPage = window.location.pathname.split('/').pop();
+    // Get the current path, defaulting to index.html if root
+    const path = window.location.pathname;
+    const currentPage = path.split('/').pop() || 'index.html';
     const navLinks = document.querySelectorAll('nav a');
 
     navLinks.forEach(link => {
         const linkPage = link.getAttribute('href').split('/').pop();
-        if (linkPage === currentPage || (currentPage === '' && linkPage === 'index.html')) {
+        if (linkPage === currentPage) {
             link.classList.add('active');
         }
     });
