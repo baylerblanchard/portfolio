@@ -765,3 +765,15 @@ html.dark .sun-and-moon > .moon {
         margin-top: 2rem; /* Add some space between the text and the image */
     }
 }
+
+/* Scroll Reveal Animation Classes */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
