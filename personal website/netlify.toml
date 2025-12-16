@@ -1,0 +1,16 @@
+[build]
+  publish = "personal website"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Protects against Clickjacking
+    X-Frame-Options = "DENY"
+    # Protects against XSS attacks
+    X-XSS-Protection = "1; mode=block"
+    # Prevents MIME-type sniffing
+    X-Content-Type-Options = "nosniff"
+    # Controls how much referrer information is sent
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Content Security Policy (Basic)
+    Content-Security-Policy = "default-src 'self' https:; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"
