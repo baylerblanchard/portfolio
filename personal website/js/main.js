@@ -57,3 +57,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if(checkbox) checkbox.checked = true;
         }
     });
+
+// Scroll Reveal Animation
+// Usage: Add class="reveal" to any HTML element you want to fade in on scroll
+const observerOptions = {
+    threshold: 0.15 // Trigger when 15% of the element is visible
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
