@@ -291,6 +291,9 @@ footer {
     max-width: 100%; /* Ensure the iframe is responsive */
     border: none; /* Remove the default border */
     margin-bottom: 18px;
+    width: 100%; /* Force it to fit the container */
+    aspect-ratio: 16 / 9; /* Maintain video proportions */
+    height: auto; /* Override the hardcoded height */
 }
 
 .project-image-gallery {
