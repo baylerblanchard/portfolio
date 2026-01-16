@@ -2,21 +2,33 @@
 
 /* CSS Variables for a consistent theme */
 :root {
-    --primary-color: #4E9A06; /* A darker teal for contrast */
-    --secondary-color: #66ad4c; /* A brighter teal for links */
-    --background-color: #f4f4f4; /* Light gray background */
-    --surface-color: #ffffff; /* White for surfaces */
-    --text-color: #333333; /* Dark gray text */
-    --border-radius: 0; /* Square corners */
-    --shadow: none; /* No shadows for a flat look */
+    --primary-color: #4E9A06;
+    /* A darker teal for contrast */
+    --secondary-color: #66ad4c;
+    /* A brighter teal for links */
+    --background-color: #f4f4f4;
+    /* Light gray background */
+    --surface-color: #ffffff;
+    /* White for surfaces */
+    --text-color: #333333;
+    /* Dark gray text */
+    --border-radius: 0;
+    /* Square corners */
+    --shadow: none;
+    /* No shadows for a flat look */
 }
 
 html.dark {
-    --primary-color: #4E9A06; /* Terminal Green */
-    --secondary-color: #66ad4c; /* A calm blue for links */
-    --background-color: #1e1e1e; /* Dark background */
-    --surface-color: #2d2d2d; /* Slightly lighter dark for surfaces */
-    --text-color: #d4d4d4; /* Light gray text */
+    --primary-color: #4E9A06;
+    /* Terminal Green */
+    --secondary-color: #66ad4c;
+    /* A calm blue for links */
+    --background-color: #1e1e1e;
+    /* Dark background */
+    --surface-color: #2d2d2d;
+    /* Slightly lighter dark for surfaces */
+    --text-color: #d4d4d4;
+    /* Light gray text */
 }
 
 
@@ -46,7 +58,8 @@ header {
     background-color: var(--surface-color);
     box-shadow: var(--shadow);
     border-bottom: 1px solid var(--primary-color);
-    padding: 1rem 5%; /* Use percentage for responsive padding */
+    padding: 1rem 5%;
+    /* Use percentage for responsive padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -61,7 +74,10 @@ header {
     gap: 2rem;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
     font-family: 'Ubuntu Mono', monospace;
     color: var(--primary-color);
     margin-top: 0;
@@ -106,7 +122,9 @@ nav a {
     transition: color 0.3s ease;
 }
 
-nav a:hover, nav a:focus, nav a.active {
+nav a:hover,
+nav a:focus,
+nav a.active {
     color: var(--secondary-color);
 }
 
@@ -122,6 +140,28 @@ footer {
     margin-top: auto;
 }
 
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.social-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.social-links a {
+    color: var(--primary-color);
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-links a:hover {
+    color: var(--secondary-color);
+    transform: translateY(-3px);
+}
+
 /* --- Home Page Specific Styles --- */
 #hero {
     display: flex;
@@ -131,10 +171,13 @@ footer {
     flex-wrap: wrap;
     padding: 2rem 0;
 }
+
 .hero-image {
     flex: 1;
-    min-width: 250px; /* Give it a minimum width */
-    max-width: 300px; /* And a maximum width */
+    min-width: 250px;
+    /* Give it a minimum width */
+    max-width: 300px;
+    /* And a maximum width */
     height: auto;
     border-radius: var(--border-radius);
     object-fit: cover;
@@ -162,9 +205,12 @@ footer {
 }
 
 @keyframes blink {
-    from, to {
+
+    from,
+    to {
         color: transparent;
     }
+
     50% {
         color: var(--primary-color);
     }
@@ -207,7 +253,8 @@ footer {
     display: flex;
     align-items: center;
     gap: 2rem;
-    flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+    flex-wrap: wrap;
+    /* Allows items to wrap on smaller screens */
 }
 
 .profile-picture {
@@ -219,8 +266,10 @@ footer {
 }
 
 .about-text {
-    flex: 1; /* Allows the text to take up remaining space */
-    min-width: 300px; /* Prevents text from getting too squished */
+    flex: 1;
+    /* Allows the text to take up remaining space */
+    min-width: 300px;
+    /* Prevents text from getting too squished */
 }
 
 .skills-grid {
@@ -235,7 +284,8 @@ footer {
     padding: 1.5rem;
     border-radius: var(--border-radius);
     flex: 1;
-    min-width: 200px; /* Ensures categories don't get too narrow */
+    min-width: 200px;
+    /* Ensures categories don't get too narrow */
 }
 
 .skill-category ul {
@@ -286,20 +336,28 @@ footer {
 }
 
 .project-iframe {
-    display: block; /* Treat the iframe as a block element */
-    margin: 0 auto; /* Apply automatic left and right margins */
-    max-width: 100%; /* Ensure the iframe is responsive */
-    border: none; /* Remove the default border */
+    display: block;
+    /* Treat the iframe as a block element */
+    margin: 0 auto;
+    /* Apply automatic left and right margins */
+    max-width: 100%;
+    /* Ensure the iframe is responsive */
+    border: none;
+    /* Remove the default border */
     margin-bottom: 18px;
-    width: 100%; /* Force it to fit the container */
-    aspect-ratio: 16 / 9; /* Maintain video proportions */
-    height: auto; /* Override the hardcoded height */
+    width: 100%;
+    /* Force it to fit the container */
+    aspect-ratio: 16 / 9;
+    /* Maintain video proportions */
+    height: auto;
+    /* Override the hardcoded height */
 }
 
 .project-image-gallery {
     display: flex;
     gap: 1rem;
-    flex-wrap: wrap; /* Allows images to stack on smaller screens */
+    flex-wrap: wrap;
+    /* Allows images to stack on smaller screens */
 }
 
 .project-image {
@@ -323,6 +381,24 @@ footer {
 
 .project-link:hover {
     color: var(--primary-color);
+}
+
+.tech-stack {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tech-badge {
+    background-color: var(--surface-color);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
 }
 
 /* --- 404 Page Specific Styles --- */
@@ -354,14 +430,16 @@ footer {
     color: var(--primary-color);
 }
 
-.contact-form input, .contact-form textarea {
+.contact-form input,
+.contact-form textarea {
     font-family: 'Ubuntu Mono', monospace;
     padding: 1rem;
     border: 1px solid var(--primary-color);
     border-radius: var(--border-radius);
     width: 100%;
     background-color: var(--background-color);
-    box-sizing: border-box; /* Ensures padding doesn't add to the width */
+    box-sizing: border-box;
+    /* Ensures padding doesn't add to the width */
     color: var(--text-color);
     max-width: 600px;
 }
@@ -483,16 +561,21 @@ footer {
     transition: .4s;
 }
 
-input:not(:checked) + .slider {
+input:not(:checked)+.slider {
     background-color: var(--background-color);
 }
 
-input:not(:checked) + .slider:before {
+input:not(:checked)+.slider:before {
     transform: translateX(26px);
 }
 
-.slider.round { border-radius: 34px; }
-.slider.round:before { border-radius: 50%; }
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
 
 .theme-switcher {
     background: none;
@@ -508,31 +591,31 @@ input:not(:checked) + .slider:before {
 }
 
 /* Icon transition styles */
-.sun-and-moon > .sun {
+.sun-and-moon>.sun {
     transform-origin: center center;
     transition: transform 0.5s cubic-bezier(0.5, 1.5, 0.5, 1.5);
 }
 
-.sun-and-moon > .moon {
+.sun-and-moon>.moon {
     transform-origin: center center;
     transition: transform 0.5s cubic-bezier(0.5, 1.5, 0.5, 1.5);
     fill: var(--primary-color);
 }
 
-html:not(.dark) .sun-and-moon > .sun {
+html:not(.dark) .sun-and-moon>.sun {
     transform: scale(1.75);
 }
 
-html:not(.dark) .sun-and-moon > .moon {
+html:not(.dark) .sun-and-moon>.moon {
     transform: scale(0);
     fill: transparent;
 }
 
-html.dark .sun-and-moon > .sun {
+html.dark .sun-and-moon>.sun {
     transform: rotate(360deg) scale(0);
 }
 
-html.dark .sun-and-moon > .moon {
+html.dark .sun-and-moon>.moon {
     transform: rotate(0deg);
 }
 
@@ -544,14 +627,16 @@ html.dark .sun-and-moon > .moon {
 /* --- Media Queries for Responsiveness --- */
 
 .nav-toggle {
-    display: none; /* Hidden by default on larger screens */
+    display: none;
+    /* Hidden by default on larger screens */
     padding: 0.5em;
     background: transparent;
     border: 0;
     cursor: pointer;
     position: absolute;
     right: 1em;
-    top: 1.5rem; /* Adjust to vertically center with title */
+    top: 1.5rem;
+    /* Adjust to vertically center with title */
     z-index: 1000;
 }
 
@@ -578,8 +663,13 @@ html.dark .sun-and-moon > .moon {
     right: 0;
 }
 
-.hamburger::before { top: 6px; }
-.hamburger::after { bottom: 6px; }
+.hamburger::before {
+    top: 6px;
+}
+
+.hamburger::after {
+    bottom: 6px;
+}
 
 /* Animate hamburger to X */
 .nav-toggle.is-active .hamburger {
@@ -600,7 +690,7 @@ html.dark .sun-and-moon > .moon {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .header-content-left {
         display: flex;
         justify-content: space-between;
@@ -623,19 +713,22 @@ html.dark .sun-and-moon > .moon {
     nav ul {
         flex-direction: column;
         width: 100%;
-        display: none; /* Hide nav links by default on mobile */
+        display: none;
+        /* Hide nav links by default on mobile */
         position: absolute;
         background: var(--surface-color);
         left: 0;
         right: 0;
-        top: 100%; /* Position below the header */
+        top: 100%;
+        /* Position below the header */
         box-shadow: var(--shadow);
         border-bottom: 1px solid var(--primary-color);
         text-align: center;
     }
 
     nav ul.active {
-        display: flex; /* Show the nav when it has the .active class */
+        display: flex;
+        /* Show the nav when it has the .active class */
     }
 
     nav a {
@@ -674,7 +767,8 @@ html.dark .sun-and-moon > .moon {
 
     .skill-category {
         width: 100%;
-        box-sizing: border-box; /* Ensures padding is included in the width */
+        box-sizing: border-box;
+        /* Ensures padding is included in the width */
     }
 
     #work .project-card {
@@ -687,7 +781,8 @@ html.dark .sun-and-moon > .moon {
     }
 
     .project-image-gallery .project-image {
-        flex-basis: 100%; /* Make each image take full width on smaller screens */
+        flex-basis: 100%;
+        /* Make each image take full width on smaller screens */
         width: 100%;
     }
 
@@ -731,7 +826,8 @@ html.dark .sun-and-moon > .moon {
 
     .skill-category {
         width: 100%;
-        box-sizing: border-box; /* Ensures padding is included in the width */
+        box-sizing: border-box;
+        /* Ensures padding is included in the width */
     }
 
     #work .project-card {
@@ -744,7 +840,8 @@ html.dark .sun-and-moon > .moon {
     }
 
     .project-image-gallery .project-image {
-        flex-basis: 100%; /* Ensure stacking on very small screens too */
+        flex-basis: 100%;
+        /* Ensure stacking on very small screens too */
         width: 100%;
     }
 
@@ -760,12 +857,15 @@ html.dark .sun-and-moon > .moon {
 
 @media (max-width: 768px) {
     #hero {
-        flex-direction: column; /* Stack items vertically */
-        text-align: center;    /* Center-align the text for a better mobile look */
+        flex-direction: column;
+        /* Stack items vertically */
+        text-align: center;
+        /* Center-align the text for a better mobile look */
     }
 
     .hero-image {
-        margin-top: 2rem; /* Add some space between the text and the image */
+        margin-top: 2rem;
+        /* Add some space between the text and the image */
     }
 }
 
