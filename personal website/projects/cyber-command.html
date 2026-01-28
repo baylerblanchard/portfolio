@@ -185,36 +185,46 @@
     </footer>
     <script src="../js/main.js"></script>
     <script>
-        // Inline script for the dashboard demo
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('threatChart').getContext('2d');
             const loadingIndicator = document.getElementById('loading-indicator');
             const tableBody = document.getElementById('incident-table-body');
 
-            // 1. Chart Data
-            const chartData = {
-                labels: ['Critical', 'High', 'Medium', 'Low'],
-                datasets: [{
-                    label: 'Vulnerabilities (Last 24h)',
-                    data: [12, 45, 67, 23],
-                    backgroundColor: [
-                        'rgba(220, 53, 69, 0.7)',   // Critical - Red
-                        'rgba(255, 193, 7, 0.7)',   // High - Orange/Yellow
-                        'rgba(23, 162, 184, 0.7)',  // Medium - Teal
-                        'rgba(40, 167, 69, 0.7)'    // Low - Green
-                    ],
-                    borderWidth: 0
-                }]
-            };
+            // 1. Initialize Empty Chart
+            const threatChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Critical', 'High', 'Medium', 'Low'],
+                    datasets: [{
+                        label: 'Vulnerabilities',
+                        data: [0, 0, 0, 0], // Initial empty state
+                        backgroundColor: [
+                            'rgba(220, 53, 69, 0.8)',   // Critical - Red
+                            'rgba(255, 193, 7, 0.8)',   // High - Yellow
+                            'rgba(23, 162, 184, 0.8)',  // Medium - Teal
+                            'rgba(40, 167, 69, 0.8)'    // Low - Green
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#888' } },
+                        title: { display: true, text: 'Real-Time Severity Distribution (Last 30)' }
+                    }
+                }
+            });
 
-            // 2. Mock Incident Data (More informative)
-            const incidents = [
-                { id: 'CVE-2024-3094', severity: 'Critical', score: 10.0, desc: 'Malicious backdoor in XZ Utils compression library allowing SSH compromise.' },
-                { id: 'CVE-2023-44487', severity: 'High', score: 7.5, desc: 'HTTP/2 Rapid Reset attack causing Denial of Service (DoS).' },
-                { id: 'CVE-2023-38545', severity: 'Critical', score: 9.8, desc: 'Heap-based buffer overflow in curl SOCKS5 proxy handshake.' },
-                { id: 'CVE-2023-23397', severity: 'High', score: 8.8, desc: 'Microsoft Outlook elevation of privilege through NTLM relay.' },
-                { id: 'CVE-2024-21413', severity: 'Critical', score: 9.8, desc: 'Microsoft Outlook remote code execution vulnerability (MonikerLink).' }
-            ];
+            // 2. Helper to determine severity from score
+            function getSeverityFromScore(score) {
+                if (score >= 9.0) return 'Critical';
+                if (score >= 7.0) return 'High';
+                if (score >= 4.0) return 'Medium';
+                return 'Low';
+            }
 
             function getSeverityColor(severity) {
                 switch (severity.toLowerCase()) {
@@ -225,45 +235,119 @@
                 }
             }
 
-            // Simulate Network Delay
-            setTimeout(() => {
-                loadingIndicator.style.display = 'none';
+            // 3. Fetch Data from cve.circl.lu
+            async function fetchThreatData() {
+                try {
+                    const response = await fetch('https://cve.circl.lu/api/last?limit=30');
+                    if (!response.ok) throw new Error('Failed to fetch threat feed');
 
-                // Initialize Chart
-                new Chart(ctx, {
-                    type: 'doughnut', // Changed to doughnut for a modern dashboard look
-                    data: chartData,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'right' },
-                            title: { display: true, text: 'Real-Time Severity Distribution' }
+                    const data = await response.json();
+
+                    const incidents = [];
+                    const stats = { Critical: 0, High: 0, Medium: 0, Low: 0 };
+
+                    let processedCount = 0;
+
+                    for (const item of data) {
+                        if (processedCount >= 10) break; // Display top 10 in table
+
+                        // Handle different CVE JSON versions gracefully
+                        let cveId = item.id || item.cveMetadata?.cveId || 'Unknown ID';
+                        let desc = item.summary || item.containers?.cna?.descriptions?.[0]?.value || 'No description provided.';
+
+                        // Truncate description
+                        if (desc.length > 100) desc = desc.substring(0, 100) + '...';
+
+                        // Extract Score & Severity
+                        let score = 0;
+                        let severity = 'Low';
+
+                        // Try to parse CVSS metrics if available
+                        const metrics = item.containers?.cna?.metrics || [];
+                        let foundMetric = false;
+
+                        // Priority: CVSS v3.1 > v3.0 > v2.0
+                        for (const m of metrics) {
+                            if (m.cvssV3_1) {
+                                score = m.cvssV3_1.baseScore;
+                                severity = m.cvssV3_1.baseSeverity || getSeverityFromScore(score);
+                                foundMetric = true;
+                                break;
+                            } else if (m.cvssV3_0) {
+                                score = m.cvssV3_0.baseScore;
+                                severity = m.cvssV3_0.baseSeverity || getSeverityFromScore(score);
+                                foundMetric = true;
+                                break;
+                            } else if (m.cvssV2_0) {
+                                score = m.cvssV2_0.baseScore;
+                                severity = getSeverityFromScore(score); // v2 doesn't always have same text labels
+                                foundMetric = true;
+                                break;
+                            }
                         }
-                    }
-                });
 
-                // Populate Table
+                        // Fallback checking for "cvss" field in older formats
+                        if (!foundMetric && item.cvss) {
+                            score = parseFloat(item.cvss);
+                            severity = getSeverityFromScore(score);
+                        }
+
+                        // Normalize Severity Text
+                        severity = severity.charAt(0).toUpperCase() + severity.slice(1).toLowerCase();
+                        if (!stats.hasOwnProperty(severity)) severity = 'Low'; // Safety fallback
+
+                        incidents.push({ id: cveId, severity, score, desc });
+                        stats[severity]++;
+
+                        processedCount++;
+                    }
+
+                    updateDashboard(incidents, stats);
+                    loadingIndicator.style.display = 'none';
+
+                } catch (error) {
+                    console.error('Error loading threat data:', error);
+                    loadingIndicator.innerHTML = '<span style="color: #dc3545;">Connection failed. Displaying cached simulation.</span>';
+                    // Optional: Load fallback data here if needed
+                }
+            }
+
+            function updateDashboard(incidents, stats) {
+                // Update Chart
+                threatChart.data.datasets[0].data = [
+                    stats['Critical'],
+                    stats['High'],
+                    stats['Medium'],
+                    stats['Low']
+                ];
+                threatChart.update();
+
+                // Update Table
+                tableBody.innerHTML = '';
                 incidents.forEach(incident => {
                     const row = document.createElement('tr');
-                    row.style.borderBottom = '1px solid #eee';
+                    row.style.borderBottom = '1px solid #eee'; // Keep inline style or move to CSS
 
                     row.innerHTML = `
-                        <td style="padding: 12px; font-weight: bold;">${incident.id}</td>
+                        <td style="padding: 12px; font-weight: bold; white-space: nowrap;">${incident.id}</td>
                         <td style="padding: 12px;">
-                            <span style="background-color: ${getSeverityColor(incident.severity)}; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">
-                                ${incident.severity} (${incident.score})
+                            <span style="background-color: ${getSeverityColor(incident.severity)}; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                                ${incident.severity.toUpperCase()}
                             </span>
                         </td>
-                        <td style="padding: 12px;">${incident.desc}</td>
+                        <td style="padding: 12px; color: #555;">${incident.desc}</td>
                         <td style="padding: 12px;">
-                            <a href="https://nvd.nist.gov/vuln/detail/${incident.id}" target="_blank" style="color: #007bff; text-decoration: none;">View &rarr;</a>
+                            <a href="https://nvd.nist.gov/vuln/detail/${incident.id}" target="_blank" class="view-link" style="color: #007bff; text-decoration: none; font-weight: 500;">
+                                View <span style="font-size: 1.2em;">&rarr;</span>
+                            </a>
                         </td>
                     `;
                     tableBody.appendChild(row);
                 });
+            }
 
-            }, 800);
+            // Start Fetch
+            fetchThreatData();
         });
     </script>
 </body>
