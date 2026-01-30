@@ -48,3 +48,5 @@ To run this project locally:
 ## 📬 Contact
 
 Feel free to reach out via the contact form on the website or connect with me on LinkedIn.
+
+Add new project to project page and update on LinkedIn. 
