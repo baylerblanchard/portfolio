@@ -52,7 +52,11 @@ Feel free to reach out via the contact form on the website or connect with me on
 Add new project to project page and update on LinkedIn. add a more in-depth section for Cybersecurity. 
 
 Cybersecurity Portfolio Project Ideas
+
 Home Lab & SOC Automation
+
 Active Directory Hardening
+
 Cloud Security Tripwire
+
 Network Traffic Analysis Report
