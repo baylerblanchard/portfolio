@@ -1,0 +1,743 @@
+/* cyber-command.css - Specialized styling for the Cyber-Threat Command Center */
+
+/* Custom properties for the Cyber-Threat dashboard */
+:root {
+    --cyber-bg: #0d0e12;
+    --cyber-surface: #151821;
+    --cyber-border: #1e2536;
+    --cyber-green: #39ff14;
+    --cyber-green-dim: rgba(57, 255, 20, 0.2);
+    --cyber-red: #ff3838;
+    --cyber-red-dim: rgba(255, 56, 56, 0.2);
+    --cyber-amber: #ffb300;
+    --cyber-amber-dim: rgba(255, 179, 0, 0.2);
+    --cyber-blue: #00e5ff;
+    --cyber-blue-dim: rgba(0, 229, 255, 0.2);
+    --cyber-text: #e2e8f0;
+    --cyber-muted: #64748b;
+    --terminal-crt-color: rgba(18, 16, 16, 0.1);
+}
+
+/* Dashboard Panel Container */
+.cyber-dashboard {
+    background-color: var(--cyber-bg);
+    color: var(--cyber-text);
+    border: 1px solid var(--cyber-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    font-family: 'Ubuntu Mono', monospace;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+/* Pulse Animation for Status Indicators */
+@keyframes cyber-pulse {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+.pulse-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: cyber-pulse 2s infinite;
+}
+
+.pulse-green {
+    background-color: var(--cyber-green);
+    box-shadow: 0 0 8px var(--cyber-green);
+}
+
+.pulse-red {
+    background-color: var(--cyber-red);
+    box-shadow: 0 0 8px var(--cyber-red);
+}
+
+.pulse-amber {
+    background-color: var(--cyber-amber);
+    box-shadow: 0 0 8px var(--cyber-amber);
+}
+
+/* Global Stats Header Bar */
+.cyber-status-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    background: rgba(21, 24, 33, 0.7);
+    border: 1px solid var(--cyber-border);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.status-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.status-stat-label {
+    font-size: 0.75rem;
+    color: var(--cyber-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Glowing Border effect */
+.glow-box {
+    position: relative;
+    background-color: var(--cyber-surface);
+    border: 1px solid var(--cyber-border);
+    border-radius: 6px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glow-box:hover {
+    border-color: rgba(57, 255, 20, 0.4);
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.1);
+}
+
+/* Threat Map Section */
+.threat-map-container {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--cyber-border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.map-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cyber-green);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.threat-canvas {
+    width: 100%;
+    height: 320px;
+    background: radial-gradient(circle, #10121a 0%, #08090d 100%);
+    border: 1px solid #1a2233;
+    border-radius: 4px;
+    display: block;
+}
+
+/* Two-column widgets grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Feed Table and Toolbar styling */
+.feed-header-toolbar {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(21, 24, 33, 0.5);
+    border-bottom: 1px solid var(--cyber-border);
+}
+
+.cyber-search-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.cyber-input {
+    width: 100%;
+    background: #090a0d;
+    border: 1px solid var(--cyber-border);
+    color: var(--cyber-text);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.cyber-input:focus {
+    outline: none;
+    border-color: var(--cyber-green);
+    box-shadow: 0 0 5px rgba(57, 255, 20, 0.3);
+}
+
+.cyber-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-chip {
+    background: rgba(30, 37, 54, 0.6);
+    border: 1px solid var(--cyber-border);
+    color: var(--cyber-muted);
+    padding: 0.3rem 0.7rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+    color: var(--cyber-text);
+    border-color: var(--cyber-muted);
+}
+
+.filter-chip.active {
+    background: var(--cyber-green-dim);
+    border-color: var(--cyber-green);
+    color: var(--cyber-green);
+}
+
+.filter-chip[data-severity="critical"].active {
+    background: var(--cyber-red-dim);
+    border-color: var(--cyber-red);
+    color: var(--cyber-red);
+}
+
+.filter-chip[data-severity="high"].active {
+    background: var(--cyber-amber-dim);
+    border-color: var(--cyber-amber);
+    color: var(--cyber-amber);
+}
+
+.filter-chip[data-severity="medium"].active {
+    background: var(--cyber-blue-dim);
+    border-color: var(--cyber-blue);
+    color: var(--cyber-blue);
+}
+
+/* Custom Table View */
+.cyber-table-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.cyber-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.cyber-table th {
+    position: sticky;
+    top: 0;
+    background: #10131c;
+    color: var(--cyber-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid var(--cyber-border);
+    z-index: 2;
+}
+
+.cyber-table tr {
+    border-bottom: 1px solid var(--cyber-border);
+    transition: background-color 0.15s;
+}
+
+.cyber-table tr:hover {
+    background: rgba(30, 37, 54, 0.3);
+}
+
+.cyber-table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+}
+
+.severity-tag {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.severity-critical {
+    background: var(--cyber-red-dim);
+    color: var(--cyber-red);
+    border: 1px solid rgba(255, 56, 56, 0.4);
+}
+
+.severity-high {
+    background: var(--cyber-amber-dim);
+    color: var(--cyber-amber);
+    border: 1px solid rgba(255, 179, 0, 0.4);
+}
+
+.severity-medium {
+    background: var(--cyber-blue-dim);
+    color: var(--cyber-blue);
+    border: 1px solid rgba(0, 229, 255, 0.4);
+}
+
+.severity-low {
+    background: var(--cyber-green-dim);
+    color: var(--cyber-green);
+    border: 1px solid rgba(57, 255, 20, 0.4);
+}
+
+.cyber-btn-link {
+    color: var(--cyber-green);
+    text-decoration: none;
+    font-weight: 700;
+    transition: text-shadow 0.2s, color 0.2s;
+}
+
+.cyber-btn-link:hover {
+    color: #fff;
+    text-shadow: 0 0 5px var(--cyber-green);
+}
+
+/* Tabbed Logs/Terminal Panel */
+.terminal-card {
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+}
+
+.terminal-tabs {
+    display: flex;
+    background: #0f1118;
+    border-bottom: 1px solid var(--cyber-border);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.terminal-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--cyber-muted);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.75rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.terminal-tab:hover {
+    color: var(--cyber-text);
+}
+
+.terminal-tab.active {
+    color: var(--cyber-green);
+    border-bottom-color: var(--cyber-green);
+    background: rgba(21, 24, 33, 0.5);
+}
+
+.terminal-content-area {
+    flex: 1;
+    background: #06070a;
+    position: relative;
+    overflow: hidden;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* CRT Scanline Scan effect overlay */
+.crt-overlay::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 10;
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
+}
+
+/* Terminal logs and CLI scrolling areas */
+.log-stream {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #a3b3c9;
+}
+
+.log-entry {
+    margin-bottom: 0.4rem;
+    word-break: break-all;
+}
+
+.log-entry-time {
+    color: var(--cyber-muted);
+}
+
+.log-entry-info {
+    color: var(--cyber-blue);
+}
+
+.log-entry-warn {
+    color: var(--cyber-amber);
+}
+
+.log-entry-alert {
+    color: var(--cyber-red);
+}
+
+.log-entry-ok {
+    color: var(--cyber-green);
+}
+
+/* CLI shell terminal styles */
+.cli-shell {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    font-size: 0.85rem;
+    color: var(--cyber-green);
+}
+
+.cli-output {
+    white-space: pre-wrap;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+}
+
+.cli-input-line {
+    display: flex;
+    align-items: center;
+}
+
+.cli-prompt {
+    color: var(--cyber-blue);
+    margin-right: 0.5rem;
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+.cli-input {
+    background: transparent;
+    border: none;
+    color: var(--cyber-green);
+    font-family: inherit;
+    font-size: inherit;
+    flex: 1;
+    outline: none;
+    caret-color: var(--cyber-green);
+}
+
+/* Matrix Matrix rain screen saver overlay */
+.matrix-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+    background: #000;
+    display: none;
+    cursor: pointer;
+}
+
+.matrix-canvas.active {
+    display: block;
+}
+
+.matrix-exit-hint {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+    font-size: 0.75rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--cyber-green);
+    pointer-events: none;
+    display: none;
+}
+
+.matrix-canvas.active + .matrix-exit-hint {
+    display: block;
+}
+
+/* Dynamic Charts Card styles */
+.chart-card {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    height: 480px;
+    box-sizing: border-box;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--cyber-border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.chart-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cyber-blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.chart-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--cyber-border);
+    color: var(--cyber-muted);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-family: inherit;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.chart-toggle-btn:hover {
+    color: var(--cyber-text);
+    border-color: var(--cyber-muted);
+}
+
+.chart-wrapper {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: calc(100% - 40px);
+}
+
+/* Modal Popup Window styling */
+.cyber-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.cyber-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.cyber-modal-content {
+    background: var(--cyber-surface);
+    border: 1.5px solid var(--cyber-border);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 650px;
+    max-height: 85%;
+    overflow-y: auto;
+    font-family: 'Ubuntu Mono', monospace;
+    color: var(--cyber-text);
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.25);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.cyber-modal.active .cyber-modal-content {
+    transform: scale(1);
+    border-color: var(--cyber-blue);
+}
+
+.cyber-modal-header {
+    background: #0f1118;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--cyber-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cyber-modal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--cyber-blue);
+    margin: 0;
+}
+
+.cyber-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--cyber-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.cyber-modal-close:hover {
+    color: var(--cyber-red);
+}
+
+.cyber-modal-body {
+    padding: 1.5rem;
+}
+
+.cve-metadata-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    background: rgba(13, 14, 18, 0.4);
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--cyber-border);
+}
+
+.meta-field-label {
+    font-size: 0.75rem;
+    color: var(--cyber-muted);
+    text-transform: uppercase;
+}
+
+.meta-field-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-top: 0.2rem;
+}
+
+.modal-section-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: var(--cyber-muted);
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--cyber-border);
+    padding-bottom: 0.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.modal-section-body {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--cyber-text);
+}
+
+.mitigation-box {
+    background: rgba(57, 255, 20, 0.05);
+    border-left: 3px solid var(--cyber-green);
+    padding: 0.75rem 1rem;
+    margin-top: 0.5rem;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Custom Scrollbar for cyber elements */
+.cyber-table-container::-webkit-scrollbar,
+.log-stream::-webkit-scrollbar,
+.cli-shell::-webkit-scrollbar,
+.cyber-modal-content::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.cyber-table-container::-webkit-scrollbar-track,
+.log-stream::-webkit-scrollbar-track,
+.cli-shell::-webkit-scrollbar-track,
+.cyber-modal-content::-webkit-scrollbar-track {
+    background: #090a0d;
+}
+
+.cyber-table-container::-webkit-scrollbar-thumb,
+.log-stream::-webkit-scrollbar-thumb,
+.cli-shell::-webkit-scrollbar-thumb,
+.cyber-modal-content::-webkit-scrollbar-thumb {
+    background: var(--cyber-border);
+    border-radius: 3px;
+}
+
+.cyber-table-container::-webkit-scrollbar-thumb:hover,
+.log-stream::-webkit-scrollbar-thumb:hover,
+.cli-shell::-webkit-scrollbar-thumb:hover,
+.cyber-modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--cyber-muted);
+}
+
+/* STAR details cards */
+.star-layout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.star-card {
+    background: var(--surface-color);
+    border: 1px solid var(--primary-color);
+    padding: 1.25rem;
+    border-radius: var(--border-radius);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.star-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(78, 154, 6, 0.15);
+}
+
+.star-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.star-card-desc {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 0;
+}

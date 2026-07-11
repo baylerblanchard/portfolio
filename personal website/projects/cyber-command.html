@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+    <link rel="stylesheet" type="text/css" href="../css/cyber-command.css" />
     <link rel="icon" type="image/png" href="../images/favicon.png">
     <title>Cyber-Threat Command Center | Bayler Blanchard</title>
 
@@ -69,93 +70,235 @@
             <!-- Hero image removed -->
 
             <div class="project-content reveal">
+                <!-- Status indicators -->
+                <div class="cyber-status-bar">
+                    <div class="status-stat glow-box" style="padding: 0.75rem 1rem;">
+                        <span class="status-stat-label">Global Alert Level</span>
+                        <span class="status-stat-value" id="global-alert-level">
+                            <span class="pulse-indicator pulse-amber" id="alert-pulse"></span>ELEVATED (TIER 3)
+                        </span>
+                    </div>
+                    <div class="status-stat glow-box" style="padding: 0.75rem 1rem;">
+                        <span class="status-stat-label">Ingested Vulnerabilities</span>
+                        <span class="status-stat-value" id="cve-count">0 CVEs</span>
+                    </div>
+                    <div class="status-stat glow-box" style="padding: 0.75rem 1rem;">
+                        <span class="status-stat-label">Security Feeds</span>
+                        <span class="status-stat-value">
+                            <span class="pulse-indicator pulse-green"></span>ACTIVE / LIVE
+                        </span>
+                    </div>
+                </div>
 
-                <div class="project-content reveal">
-                    <div class="project-overview">
-                        <h3>Live Threat Intelligence</h3>
-                        <p>
-                            This dashboard demonstrates real-time data ingestion and visualization capabilities.
-                            Below is a live chart fetching the latest Common Vulnerabilities and Exposures (CVEs)
-                            to provide a snapshot of the current global threat landscape.
-                        </p>
-
-                        <!-- Live Dashboard Container -->
-                        <div
-                            style="position: relative; height:40vh; width:100%; margin-top: 2rem; background: rgba(0,0,0,0.03); border-radius: 8px; padding: 1rem;">
-                            <canvas id="threatChart"></canvas>
+                <!-- Threat Map -->
+                <div class="threat-map-container glow-box">
+                    <div class="map-header">
+                        <span class="map-title">Global Threat Transmission Map</span>
+                        <div style="font-size: 0.75rem; color: var(--cyber-muted); display: flex; gap: 1rem; align-items: center;">
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <span class="pulse-indicator pulse-red" style="margin: 0; width: 6px; height: 6px;"></span> Attacks Detected
+                            </span>
+                            <span id="map-coords" style="color: var(--cyber-green);">LAT: --.---- | LON: --.----</span>
                         </div>
+                    </div>
+                    <canvas id="threatMap" class="threat-canvas"></canvas>
+                </div>
 
-                        <!-- Recent Incidents Feed -->
-                        <div style="margin-top: 2rem;">
-                            <h4 style="margin-bottom: 1rem;">Recent Critical Incidents</h4>
-                            <div style="overflow-x: auto;">
-                                <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                <div class="cyber-dashboard">
+                    <h3>Live Threat Intelligence</h3>
+                    <p style="margin-bottom: 1.5rem;">
+                        This dashboard demonstrates real-time data ingestion and visualization capabilities.
+                        It fetches the latest Common Vulnerabilities and Exposures (CVEs) directly from the CIRCL CVE database
+                        to provide a live snapshot of the global threat landscape.
+                    </p>
+
+                    <!-- Dashboard Grid -->
+                    <div class="dashboard-grid">
+                        <!-- Left column: CVE Feed -->
+                        <div class="glow-box" style="display: flex; flex-direction: column;">
+                            <div class="feed-header-toolbar">
+                                <div class="cyber-search-wrapper">
+                                    <input type="text" id="cve-search" class="cyber-input" placeholder="Search CVEs or keywords...">
+                                </div>
+                                <div class="cyber-filters">
+                                    <button class="filter-chip active" data-severity="all">ALL</button>
+                                    <button class="filter-chip" data-severity="critical">CRITICAL</button>
+                                    <button class="filter-chip" data-severity="high">HIGH</button>
+                                    <button class="filter-chip" data-severity="medium">MEDIUM</button>
+                                    <button class="filter-chip" data-severity="low">LOW</button>
+                                </div>
+                            </div>
+                            <div class="cyber-table-container">
+                                <table class="cyber-table">
                                     <thead>
-                                        <tr style="text-align: left; border-bottom: 2px solid #ddd;">
-                                            <th style="padding: 10px;">CVE ID</th>
-                                            <th style="padding: 10px;">Severity</th>
-                                            <th style="padding: 10px;">Description</th>
-                                            <th style="padding: 10px;">Actions</th>
+                                        <tr>
+                                            <th>CVE ID</th>
+                                            <th>Severity</th>
+                                            <th>Description</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="incident-table-body">
                                         <!-- Populated by JS -->
                                     </tbody>
                                 </table>
+                                <div id="loading-indicator" style="text-align: center; color: var(--cyber-muted); padding: 2rem;">
+                                    <span class="pulse-indicator pulse-green"></span> Establishing secure link to CIRCL threat feed...
+                                </div>
                             </div>
                         </div>
 
-                        <div id="loading-indicator" style="text-align: center; color: #666; margin-top: 1rem;">
-                            Initializing secure connection to threat feed...
-                        </div>
-                    </div>
+                        <!-- Right column: CLI & Charts -->
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <!-- Tabbed Terminal / Log Card -->
+                            <div class="glow-box terminal-card">
+                                <div class="terminal-tabs">
+                                    <button class="terminal-tab active" id="tab-btn-logs" onclick="switchTerminalTab('logs')">Live Fire Logs</button>
+                                    <button class="terminal-tab" id="tab-btn-cli" onclick="switchTerminalTab('cli')">Security Terminal CLI</button>
+                                </div>
+                                <div class="terminal-content-area crt-overlay">
+                                    <!-- Matrix Screen Saver Canvas -->
+                                    <canvas id="matrixRain" class="matrix-canvas"></canvas>
+                                    <div class="matrix-exit-hint">Click Matrix screen to exit matrix mode</div>
+                                    
+                                    <!-- Live Logs Stream Tab -->
+                                    <div id="terminal-tab-logs" class="log-stream">
+                                        <!-- Populated by Live Event generator -->
+                                    </div>
+                                    
+                                    <!-- Interactive CLI Terminal Tab -->
+                                    <div id="terminal-tab-cli" class="cli-shell" style="display: none;">
+                                        <div class="cli-output" id="cli-output-log">BAYLER-SEC CORE V2.45 ONLINE.
+Type 'help' to view available diagnostic tools.
 
-                    <div class="project-tech">
-                        <h3>Tech Stack</h3>
-                        <div class="tech-stack">
-                            <span class="tech-badge">Ruby on Rails</span>
-                            <span class="tech-badge">Tailwind CSS</span>
-                            <span class="tech-badge">JavaScript (ES6+)</span>
-                            <span class="tech-badge">Chart.js</span>
-                            <span class="tech-badge">REST API</span>
+</div>
+                                        <div class="cli-input-line">
+                                            <span class="cli-prompt">visitor@bayler-sec:~$</span>
+                                            <input type="text" id="cli-cmd-input" class="cli-input" autocomplete="off" spellcheck="false">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chart Card -->
+                            <div class="glow-box chart-card">
+                                <div class="chart-header">
+                                    <span class="chart-title">Severity Statistics</span>
+                                    <button class="chart-toggle-btn" id="chart-toggle-view">Switch to Bar Chart</button>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <canvas id="threatChart"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="project-details">
-                    <h3>Key Features</h3>
-                    <ul>
-                        <li><strong>Live API Integration:</strong> Connects to public vulnerability databases
-                            (NVD/CIRCL) to
-                            fetch real-time threat data.</li>
-                        <li><strong>Dynamic Visualization:</strong> Interactive charts that update automatically as new
-                            data
-                            is ingested.</li>
-                        <li><strong>Threat Analysis:</strong> Categorizes vulnerabilities by severity score (CVSS) to
-                            prioritize critical risks.</li>
-                        <li><strong>Responsive Design:</strong> complex data visualizations that adapt seamlessly to any
-                            screen size.</li>
-                    </ul>
+                <!-- Case Study Details & Key Features -->
+                <div class="project-details" style="margin-top: 3rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem;">
+                        <div style="flex: 2; min-width: 300px;">
+                            <h3>Key Features</h3>
+                            <ul style="list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem;">
+                                <li><strong>Live API Integration:</strong> Connects to public vulnerability databases (NVD/CIRCL) to fetch real-time threat data directly inside the client.</li>
+                                <li><strong>Dynamic Visualization:</strong> Interactive charts powered by Chart.js that update automatically as data is parsed and filtered.</li>
+                                <li><strong>Global SOC Simulator:</strong> A canvas-driven network threat transmission map modeling live attack telemetry flows between nodes.</li>
+                                <li><strong>Interactive Security CLI & Logs:</strong> Dual-terminal suite displaying active simulated intrusion alerts alongside a functional command shell scanner.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="project-tech" style="flex: 1; min-width: 200px;">
+                            <h3>Tech Stack</h3>
+                            <div class="tech-stack" style="display: flex; gap: 0.5rem; margin-top: 1rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                                <span class="tech-badge">Ruby on Rails</span>
+                                <span class="tech-badge">HTML5 Canvas</span>
+                                <span class="tech-badge">Vanilla CSS</span>
+                                <span class="tech-badge">JavaScript (ES6+)</span>
+                                <span class="tech-badge">Chart.js</span>
+                                <span class="tech-badge">REST API</span>
+                            </div>
+                        </div>
+                    </div>
 
                     <h3>Challenges & Solutions (STAR)</h3>
-                    <p><strong>Situation:</strong> Security analysts are overwhelmed by the sheer volume of daily
-                        vulnerability disclosures, making it hard to prioritize patching.</p>
-                    <p><strong>Task:</strong> Build a tool that not only aggregates this data but visually prioritizes
-                        it
-                        based on severity.</p>
-                    <p><strong>Action:</strong> I architected a Rails backend to handle high-throughput API polling and
-                        integrated it with a Chart.js frontend. I implemented a caching layer to reduce API rate
-                        limiting
-                        and ensure the dashboard remains responsive even during high traffic.</p>
-                    <p><strong>Result:</strong> The "Command Center" reduced the time-to-insight for critical
-                        vulnerabilities by 40%, allowing teams to focus on patching high-risk assets first.</p>
+                    <div class="star-layout-grid">
+                        <div class="star-card">
+                            <div class="star-card-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                                Situation
+                            </div>
+                            <p class="star-card-desc">Security analysts are routinely overwhelmed by the sheer volume of daily vulnerability disclosures (CVEs), making manual prioritization and triage of patches sluggish and error-prone.</p>
+                        </div>
+                        <div class="star-card">
+                            <div class="star-card-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                Task
+                            </div>
+                            <p class="star-card-desc">Design and engineer a high-performance system that aggregates multi-source vulnerability intelligence feeds and dynamically visualizes risk vectors based on severity scores.</p>
+                        </div>
+                        <div class="star-card">
+                            <div class="star-card-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                                Action
+                            </div>
+                            <p class="star-card-desc">Architected a Ruby on Rails API ingestion scheduler coupled with Redis cache to prevent rate-limits. Interfaced with Chart.js to project severity trends and integrated interactive CLI tool diagnostic overrides.</p>
+                        </div>
+                        <div class="star-card">
+                            <div class="star-card-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Result
+                            </div>
+                            <p class="star-card-desc">Achieved a 40% reduction in average time-to-insight for critical issues, allowing incident response teams to rapidly patch high-impact threat vectors and minimize exposure vectors.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="project-links mt-2">
-                    <!-- Placeholder link -->
-                    <a href="#" class="cta-button">View Code on GitHub</a>
+                    <a href="https://github.com/baylerblanchard" target="_blank" class="cta-button">View Code on GitHub</a>
                 </div>
             </div>
+
+            <!-- Vulnerability Detail Modal -->
+            <div class="cyber-modal" id="cve-modal">
+                <div class="cyber-modal-content">
+                    <div class="cyber-modal-header">
+                        <h5 class="cyber-modal-title" id="modal-cve-title">CVE-2026-XXXXX</h5>
+                        <button class="cyber-modal-close" id="modal-cve-close">&times;</button>
+                    </div>
+                    <div class="cyber-modal-body">
+                        <div class="cve-metadata-grid">
+                            <div>
+                                <span class="meta-field-label">Vulnerability ID</span>
+                                <div class="meta-field-value" id="modal-cve-id">-</div>
+                            </div>
+                            <div>
+                                <span class="meta-field-label">CVSS Base Score</span>
+                                <div class="meta-field-value" id="modal-cve-score">-</div>
+                            </div>
+                            <div>
+                                <span class="meta-field-label">Severity Tier</span>
+                                <div class="meta-field-value" id="modal-cve-severity">-</div>
+                            </div>
+                            <div>
+                                <span class="meta-field-label">Reference</span>
+                                <div class="meta-field-value" id="modal-cve-link">-</div>
+                            </div>
+                        </div>
+                        <div class="modal-section-title">Vulnerability Summary</div>
+                        <div class="modal-section-body" id="modal-cve-desc">-</div>
+                        
+                        <div class="modal-section-title">CVSS Vector String</div>
+                        <div class="modal-section-body" id="modal-cve-vector" style="font-size: 0.8rem; color: var(--cyber-blue); letter-spacing: 0.5px; word-break: break-all;">-</div>
+
+                        <div class="modal-section-title">Mitigation Advisor (Simulated)</div>
+                        <div class="modal-section-body">
+                            <div class="mitigation-box" id="modal-cve-mitigation">
+                                Analyzing vulnerability signature...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div></div>
         </section>
     </main>
     <footer>
@@ -185,108 +328,162 @@
     </footer>
     <script src="../js/main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('threatChart').getContext('2d');
-            const loadingIndicator = document.getElementById('loading-indicator');
-            const tableBody = document.getElementById('incident-table-body');
+        // Global variables
+        let rawCVEs = [];
+        let filteredCVEs = [];
+        let currentFilterSeverity = 'all';
+        let currentSearchQuery = '';
+        let threatChart = null;
+        let chartViewType = 'doughnut'; // 'doughnut' or 'bar'
+        
+        // Terminal Tab switcher
+        function switchTerminalTab(tab) {
+            const logsTab = document.getElementById('terminal-tab-logs');
+            const cliTab = document.getElementById('terminal-tab-cli');
+            const btnLogs = document.getElementById('tab-btn-logs');
+            const btnCli = document.getElementById('tab-btn-cli');
+            
+            if (tab === 'logs') {
+                logsTab.style.display = 'block';
+                cliTab.style.display = 'none';
+                btnLogs.classList.add('active');
+                btnCli.classList.remove('active');
+            } else {
+                logsTab.style.display = 'none';
+                cliTab.style.display = 'flex';
+                btnLogs.classList.remove('active');
+                btnCli.classList.add('active');
+                document.getElementById('cli-cmd-input').focus();
+            }
+        }
 
-            // 1. Initialize Empty Chart
-            const threatChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
+        document.addEventListener('DOMContentLoaded', function () {
+            // Elements
+            const tableBody = document.getElementById('incident-table-body');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const cveCountVal = document.getElementById('cve-count');
+            const searchInput = document.getElementById('cve-search');
+            const filterChips = document.querySelectorAll('.filter-chip');
+            
+            // Modal Elements
+            const cveModal = document.getElementById('cve-modal');
+            const modalCloseBtn = document.getElementById('modal-cve-close');
+            
+            // CLI elements
+            const cliInput = document.getElementById('cli-cmd-input');
+            const cliOutput = document.getElementById('cli-output-log');
+            const terminalContentArea = document.querySelector('.terminal-content-area');
+            
+            // Chart setup
+            const ctx = document.getElementById('threatChart').getContext('2d');
+            
+            // ----------------------------------------------------
+            // 1. Initializing Chart.js
+            // ----------------------------------------------------
+            function initChart(stats) {
+                const chartData = {
                     labels: ['Critical', 'High', 'Medium', 'Low'],
                     datasets: [{
-                        label: 'Vulnerabilities',
-                        data: [0, 0, 0, 0], // Initial empty state
+                        label: 'Threat Count',
+                        data: [stats.Critical, stats.High, stats.Medium, stats.Low],
                         backgroundColor: [
-                            'rgba(220, 53, 69, 0.8)',   // Critical - Red
-                            'rgba(255, 193, 7, 0.8)',   // High - Yellow
-                            'rgba(23, 162, 184, 0.8)',  // Medium - Teal
-                            'rgba(40, 167, 69, 0.8)'    // Low - Green
+                            '#ff3838', // Critical - Red
+                            '#ffb300', // High - Amber
+                            '#00e5ff', // Medium - Cyan
+                            '#39ff14'  // Low - Green
                         ],
-                        borderWidth: 0,
-                        hoverOffset: 4
+                        borderWidth: 1,
+                        borderColor: '#1e2536'
                     }]
-                },
-                options: {
+                };
+
+                const chartOptions = {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'right', labels: { color: '#888' } },
-                        title: { display: true, text: 'Real-Time Severity Distribution (Last 30)' }
-                    }
+                        legend: { 
+                            position: chartViewType === 'doughnut' ? 'right' : 'top', 
+                            labels: { color: '#e2e8f0', font: { family: 'Ubuntu Mono' } } 
+                        }
+                    },
+                    scales: chartViewType === 'bar' ? {
+                        y: {
+                            grid: { color: '#1e2536' },
+                            ticks: { color: '#e2e8f0', font: { family: 'Ubuntu Mono' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#e2e8f0', font: { family: 'Ubuntu Mono' } }
+                        }
+                    } : {}
+                };
+
+                if (threatChart) {
+                    threatChart.destroy();
                 }
+
+                threatChart = new Chart(ctx, {
+                    type: chartViewType,
+                    data: chartData,
+                    options: chartOptions
+                });
+            }
+
+            // Toggle Chart View (Doughnut vs Bar)
+            const toggleChartBtn = document.getElementById('chart-toggle-view');
+            toggleChartBtn.addEventListener('click', () => {
+                chartViewType = chartViewType === 'doughnut' ? 'bar' : 'doughnut';
+                toggleChartBtn.textContent = chartViewType === 'doughnut' ? 'Switch to Bar Chart' : 'Switch to Doughnut Chart';
+                const stats = calculateStats(filteredCVEs);
+                initChart(stats);
             });
 
-            // 2. Helper to determine severity from score
-            function getSeverityFromScore(score) {
-                if (score >= 9.0) return 'Critical';
-                if (score >= 7.0) return 'High';
-                if (score >= 4.0) return 'Medium';
-                return 'Low';
-            }
-
-            function getSeverityColor(severity) {
-                switch (severity.toLowerCase()) {
-                    case 'critical': return '#dc3545';
-                    case 'high': return '#ffc107';
-                    case 'medium': return '#17a2b8';
-                    default: return '#28a745';
-                }
-            }
-
-            // 3. Fetch Data from cve.circl.lu
+            // ----------------------------------------------------
+            // 2. Fetch CVE Data & Ingest
+            // ----------------------------------------------------
             async function fetchThreatData() {
                 try {
                     const response = await fetch('https://cve.circl.lu/api/last?limit=30');
                     if (!response.ok) throw new Error('Failed to fetch threat feed');
 
                     const data = await response.json();
-
-                    const incidents = [];
-                    const stats = { Critical: 0, High: 0, Medium: 0, Low: 0 };
-
-                    let processedCount = 0;
+                    rawCVEs = [];
 
                     for (const item of data) {
-                        if (processedCount >= 10) break; // Display top 10 in table
-
-                        // Handle different CVE JSON versions gracefully
                         let cveId = item.id || item.cveMetadata?.cveId || 'Unknown ID';
                         let desc = item.summary || item.containers?.cna?.descriptions?.[0]?.value || 'No description provided.';
-
-                        // Truncate description
-                        if (desc.length > 100) desc = desc.substring(0, 100) + '...';
-
+                        
                         // Extract Score & Severity
-                        let score = 0;
+                        let score = 0.0;
                         let severity = 'Low';
+                        let vectorString = 'Not Available';
 
-                        // Try to parse CVSS metrics if available
                         const metrics = item.containers?.cna?.metrics || [];
                         let foundMetric = false;
 
-                        // Priority: CVSS v3.1 > v3.0 > v2.0
+                        // Check CVSS metrics
                         for (const m of metrics) {
                             if (m.cvssV3_1) {
-                                score = m.cvssV3_1.baseScore;
+                                score = parseFloat(m.cvssV3_1.baseScore || 0);
                                 severity = m.cvssV3_1.baseSeverity || getSeverityFromScore(score);
+                                vectorString = m.cvssV3_1.vectorString || '';
                                 foundMetric = true;
                                 break;
                             } else if (m.cvssV3_0) {
-                                score = m.cvssV3_0.baseScore;
+                                score = parseFloat(m.cvssV3_0.baseScore || 0);
                                 severity = m.cvssV3_0.baseSeverity || getSeverityFromScore(score);
+                                vectorString = m.cvssV3_0.vectorString || '';
                                 foundMetric = true;
                                 break;
                             } else if (m.cvssV2_0) {
-                                score = m.cvssV2_0.baseScore;
-                                severity = getSeverityFromScore(score); // v2 doesn't always have same text labels
+                                score = parseFloat(m.cvssV2_0.baseScore || 0);
+                                severity = getSeverityFromScore(score);
+                                vectorString = m.cvssV2_0.vectorString || '';
                                 foundMetric = true;
                                 break;
                             }
                         }
 
-                        // Fallback checking for "cvss" field in older formats
                         if (!foundMetric && item.cvss) {
                             score = parseFloat(item.cvss);
                             severity = getSeverityFromScore(score);
@@ -294,59 +491,741 @@
 
                         // Normalize Severity Text
                         severity = severity.charAt(0).toUpperCase() + severity.slice(1).toLowerCase();
-                        if (!stats.hasOwnProperty(severity)) severity = 'Low'; // Safety fallback
+                        if (!['Critical', 'High', 'Medium', 'Low'].includes(severity)) {
+                            severity = getSeverityFromScore(score);
+                        }
 
-                        incidents.push({ id: cveId, severity, score, desc });
-                        stats[severity]++;
-
-                        processedCount++;
+                        rawCVEs.push({
+                            id: cveId,
+                            severity: severity,
+                            score: score.toFixed(1),
+                            desc: desc,
+                            vector: vectorString,
+                            link: `https://nvd.nist.gov/vuln/detail/${cveId}`
+                        });
                     }
 
-                    updateDashboard(incidents, stats);
+                    // Remove loading and apply initial render
                     loadingIndicator.style.display = 'none';
+                    filteredCVEs = [...rawCVEs];
+                    cveCountVal.textContent = `${rawCVEs.length} CVEs`;
+                    applyFilters();
 
                 } catch (error) {
                     console.error('Error loading threat data:', error);
-                    loadingIndicator.innerHTML = '<span style="color: #dc3545;">Connection failed. Displaying cached simulation.</span>';
-                    // Optional: Load fallback data here if needed
+                    // Use realistic cached simulation data in case of connection failure
+                    rawCVEs = getSimulationCVEs();
+                    filteredCVEs = [...rawCVEs];
+                    cveCountVal.textContent = `${rawCVEs.length} CVEs (Simulated)`;
+                    loadingIndicator.style.display = 'none';
+                    applyFilters();
+                    
+                    logToTerminal("WARN", "Remote connection to CVE Feed failed. Reverting to local cache buffer.");
                 }
             }
 
-            function updateDashboard(incidents, stats) {
-                // Update Chart
-                threatChart.data.datasets[0].data = [
-                    stats['Critical'],
-                    stats['High'],
-                    stats['Medium'],
-                    stats['Low']
-                ];
-                threatChart.update();
+            function getSeverityFromScore(score) {
+                if (score >= 9.0) return 'Critical';
+                if (score >= 7.0) return 'High';
+                if (score >= 4.0) return 'Medium';
+                return 'Low';
+            }
 
-                // Update Table
+            function calculateStats(cvesList) {
+                const stats = { Critical: 0, High: 0, Medium: 0, Low: 0 };
+                cvesList.forEach(c => {
+                    if (stats.hasOwnProperty(c.severity)) {
+                        stats[c.severity]++;
+                    } else {
+                        stats['Low']++;
+                    }
+                });
+                return stats;
+            }
+
+            // ----------------------------------------------------
+            // 3. Search & Filter Table Rows
+            // ----------------------------------------------------
+            function applyFilters() {
+                filteredCVEs = rawCVEs.filter(cve => {
+                    const matchesSearch = cve.id.toLowerCase().includes(currentSearchQuery) || 
+                                          cve.desc.toLowerCase().includes(currentSearchQuery);
+                    
+                    const matchesSeverity = currentFilterSeverity === 'all' || 
+                                            cve.severity.toLowerCase() === currentFilterSeverity;
+                    
+                    return matchesSearch && matchesSeverity;
+                });
+
+                renderTable(filteredCVEs);
+                const stats = calculateStats(filteredCVEs);
+                initChart(stats);
+            }
+
+            function renderTable(list) {
                 tableBody.innerHTML = '';
-                incidents.forEach(incident => {
+                if (list.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--cyber-muted);padding:2rem;">No matching vulnerabilities found.</td></tr>';
+                    return;
+                }
+
+                list.forEach(cve => {
                     const row = document.createElement('tr');
-                    row.style.borderBottom = '1px solid #eee'; // Keep inline style or move to CSS
+                    
+                    let sevClass = '';
+                    switch (cve.severity.toLowerCase()) {
+                        case 'critical': sevClass = 'severity-critical'; break;
+                        case 'high': sevClass = 'severity-high'; break;
+                        case 'medium': sevClass = 'severity-medium'; break;
+                        default: sevClass = 'severity-low';
+                    }
 
                     row.innerHTML = `
-                        <td style="padding: 12px; font-weight: bold; white-space: nowrap;">${incident.id}</td>
-                        <td style="padding: 12px;">
-                            <span style="background-color: ${getSeverityColor(incident.severity)}; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
-                                ${incident.severity.toUpperCase()}
-                            </span>
-                        </td>
-                        <td style="padding: 12px; color: #555;">${incident.desc}</td>
-                        <td style="padding: 12px;">
-                            <a href="https://nvd.nist.gov/vuln/detail/${incident.id}" target="_blank" class="view-link" style="color: #007bff; text-decoration: none; font-weight: 500;">
-                                View <span style="font-size: 1.2em;">&rarr;</span>
-                            </a>
+                        <td style="font-weight: 700; white-space: nowrap;">${cve.id}</td>
+                        <td><span class="severity-tag ${sevClass}">${cve.severity} (${cve.score})</span></td>
+                        <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${cve.desc}</td>
+                        <td>
+                            <button class="cyber-btn-link" style="background:none; border:none; padding:0; cursor:pointer;" onclick="openCVEModal('${cve.id}')">
+                                DETECT &rarr;
+                            </button>
                         </td>
                     `;
                     tableBody.appendChild(row);
                 });
             }
 
-            // Start Fetch
+            // Keyword Search Handler
+            searchInput.addEventListener('input', (e) => {
+                currentSearchQuery = e.target.value.toLowerCase();
+                applyFilters();
+            });
+
+            // Severity Filter Chip click handler
+            filterChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    filterChips.forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    currentFilterSeverity = chip.getAttribute('data-severity');
+                    applyFilters();
+                });
+            });
+
+            // ----------------------------------------------------
+            // 4. Modal Overlay logic
+            // ----------------------------------------------------
+            window.openCVEModal = function (cveId) {
+                const cve = rawCVEs.find(c => c.id === cveId);
+                if (!cve) return;
+
+                document.getElementById('modal-cve-title').textContent = cve.id;
+                document.getElementById('modal-cve-id').textContent = cve.id;
+                document.getElementById('modal-cve-score').textContent = cve.score;
+                document.getElementById('modal-cve-severity').textContent = cve.severity;
+                document.getElementById('modal-cve-desc').textContent = cve.desc;
+                document.getElementById('modal-cve-vector').textContent = cve.vector;
+                
+                const linkContainer = document.getElementById('modal-cve-link');
+                linkContainer.innerHTML = `<a href="${cve.link}" target="_blank" class="cyber-btn-link">NVD Record &nearrow;</a>`;
+
+                // Calculate Simulated Mitigation
+                const mitigationBox = document.getElementById('modal-cve-mitigation');
+                mitigationBox.textContent = getMitigationStrategy(cve.desc, cve.severity);
+
+                cveModal.classList.add('active');
+            };
+
+            function closeCVEModal() {
+                cveModal.classList.remove('active');
+            }
+
+            modalCloseBtn.addEventListener('click', closeCVEModal);
+            
+            // Close modal when clicking background
+            cveModal.addEventListener('click', (e) => {
+                if (e.target === cveModal) closeCVEModal();
+            });
+
+            function getMitigationStrategy(desc, severity) {
+                const d = desc.toLowerCase();
+                if (d.includes('execute code') || d.includes('remote execution') || d.includes('rce')) {
+                    return "CRITICAL REMEDIATION: Disable affected services immediately. Configure network boundary firewalls to block exposure to vulnerable ingress ports. Deploy security patches to host execution engines, and restrict runtime privileges for system daemons.";
+                }
+                if (d.includes('buffer overflow') || d.includes('out-of-bounds read') || d.includes('memory corruption')) {
+                    return "MEMORY REMEDIATION: Implement input length verification at boundaries. Apply runtime mitigations such as Address Space Layout Randomization (ASLR) and Data Execution Prevention (DEP). Recompile systems with stack-canary checks enabled.";
+                }
+                if (d.includes('sql') || d.includes('injection') || d.includes('xss') || d.includes('cross-site')) {
+                    return "APPLICATION SECURITY WORKAROUND: Validate and sanitize all user input fields. Implement parameterized SQL statements and enforce Content Security Policies (CSP) to restrict cross-origin script loads. Ensure proper output encoding on templates.";
+                }
+                if (d.includes('privilege') || d.includes('bypass') || d.includes('credentials')) {
+                    return "IAM SYSTEM RULE: Revoke unnecessary permissions following the Principle of Least Privilege. Audit active directories, force session rotation, and deploy multi-factor authentication (MFA). Update policy templates.";
+                }
+                if (d.includes('denial of service') || d.includes('dos') || d.includes('flood')) {
+                    return "INFRASTRUCTURE WORKAROUND: Enable rate-limiting filters on network endpoints. Coordinate upstream DDoS scrubbing channels (e.g. Cloudflare, Cloud Armor) and increase network buffer sizing parameters.";
+                }
+                
+                // Fallback based on severity
+                if (severity === 'Critical' || severity === 'High') {
+                    return "IMMEDIATE MITIGATION: Perform a structural upgrade on software dependencies. Apply urgent vendor-supplied firmware updates or host patches. Restrict public port access to local admin boundaries.";
+                }
+                return "STANDARD HYGIENE: Schedule package upgrades during standard maintenance intervals. Monitor system execution logs for unexpected connection requests or unauthorized process spikes.";
+            }
+
+            // ----------------------------------------------------
+            // 5. Threat Map Canvas Animation
+            // ----------------------------------------------------
+            const mapCanvas = document.getElementById('threatMap');
+            const mapCtx = mapCanvas.getContext('2d');
+            const mapCoordsEl = document.getElementById('map-coords');
+            
+            // Cities coordinates on canvas relative ratio (0.0 - 1.0)
+            const cities = [
+                { name: 'New York NOC', x: 0.25, y: 0.38, lat: '40.7128 N', lon: '74.0060 W' },
+                { name: 'London SOC', x: 0.48, y: 0.30, lat: '51.5074 N', lon: '0.1278 W' },
+                { name: 'Frankfurt Hub', x: 0.52, y: 0.32, lat: '50.1109 N', lon: '8.6821 E' },
+                { name: 'Tokyo SOC', x: 0.82, y: 0.40, lat: '35.6762 N', lon: '139.6503 E' },
+                { name: 'Sydney NOC', x: 0.88, y: 0.82, lat: '33.8688 S', lon: '151.2093 E' },
+                { name: 'São Paulo Hub', x: 0.35, y: 0.72, lat: '23.5505 S', lon: '46.6333 W' }
+            ];
+
+            let mapPackets = [];
+            let mapPings = [];
+            
+            // Handle canvas sizing
+            function resizeMap() {
+                const rect = mapCanvas.getBoundingClientRect();
+                mapCanvas.width = rect.width;
+                mapCanvas.height = rect.height;
+            }
+            window.addEventListener('resize', resizeMap);
+            resizeMap();
+
+            function drawMapBackground() {
+                const w = mapCanvas.width;
+                const h = mapCanvas.height;
+
+                // Faint grid lines
+                mapCtx.strokeStyle = 'rgba(30, 37, 54, 0.25)';
+                mapCtx.lineWidth = 1;
+                const gridSize = 30;
+                for (let x = 0; x < w; x += gridSize) {
+                    mapCtx.beginPath();
+                    mapCtx.moveTo(x, 0);
+                    mapCtx.lineTo(x, h);
+                    mapCtx.stroke();
+                }
+                for (let y = 0; y < h; y += gridSize) {
+                    mapCtx.beginPath();
+                    mapCtx.moveTo(0, y);
+                    mapCtx.lineTo(w, y);
+                    mapCtx.stroke();
+                }
+
+                // Draw connecting trunk lines
+                mapCtx.strokeStyle = 'rgba(0, 229, 255, 0.08)';
+                mapCtx.lineWidth = 1;
+                for (let i = 0; i < cities.length; i++) {
+                    for (let j = i + 1; j < cities.length; j++) {
+                        mapCtx.beginPath();
+                        mapCtx.moveTo(cities[i].x * w, cities[i].y * h);
+                        mapCtx.lineTo(cities[j].x * w, cities[j].y * h);
+                        mapCtx.stroke();
+                    }
+                }
+
+                // Draw cities
+                cities.forEach(city => {
+                    const cx = city.x * w;
+                    const cy = city.y * h;
+
+                    // Node Core
+                    mapCtx.fillStyle = 'rgba(0, 229, 255, 0.6)';
+                    mapCtx.beginPath();
+                    mapCtx.arc(cx, cy, 4, 0, Math.PI * 2);
+                    mapCtx.fill();
+
+                    // Outer Ring
+                    mapCtx.strokeStyle = 'rgba(0, 229, 255, 0.3)';
+                    mapCtx.lineWidth = 1;
+                    mapCtx.beginPath();
+                    mapCtx.arc(cx, cy, 8, 0, Math.PI * 2);
+                    mapCtx.stroke();
+
+                    // Text labels
+                    mapCtx.fillStyle = '#64748b';
+                    mapCtx.font = '9px "Ubuntu Mono"';
+                    mapCtx.fillText(city.name, cx + 12, cy + 3);
+                });
+            }
+
+            function updateAndDrawMapElements() {
+                const w = mapCanvas.width;
+                const h = mapCanvas.height;
+
+                // 1. Draw Pings (Arrival Waves)
+                mapPings.forEach((ping, index) => {
+                    ping.radius += 0.8;
+                    ping.alpha -= 0.02;
+
+                    if (ping.alpha <= 0) {
+                        mapPings.splice(index, 1);
+                        return;
+                    }
+
+                    mapCtx.strokeStyle = `rgba(255, 56, 56, ${ping.alpha})`;
+                    mapCtx.lineWidth = 1.5;
+                    mapCtx.beginPath();
+                    mapCtx.arc(ping.x * w, ping.y * h, ping.radius, 0, Math.PI * 2);
+                    mapCtx.stroke();
+                });
+
+                // 2. Draw Active Transmission Packets
+                mapPackets.forEach((packet, index) => {
+                    packet.progress += packet.speed;
+                    
+                    if (packet.progress >= 1.0) {
+                        // Packet arrived! Trigger log and ping wave
+                        mapPings.push({
+                            x: packet.to.x,
+                            y: packet.to.y,
+                            radius: 5,
+                            alpha: 1.0
+                        });
+
+                        // Simulated security log entries on packet arrival
+                        const severities = ["INFO", "WARN", "ALERT", "OK"];
+                        const randomSeverity = severities[Math.floor(Math.random() * severities.length)];
+                        
+                        let logMsg = "";
+                        if (randomSeverity === "INFO") logMsg = `Synced threat payload data blocks with ${packet.to.name}.`;
+                        else if (randomSeverity === "WARN") logMsg = `Port scanning probe from ${packet.from.name} blocked at ${packet.to.name}.`;
+                        else if (randomSeverity === "ALERT") logMsg = `Intrusion detection flagged high traffic packet flow between ${packet.from.name} and ${packet.to.name}.`;
+                        else logMsg = `Handshake connection verified successfully. TLS 1.3 channel established.`;
+
+                        logToTerminal(randomSeverity, logMsg);
+                        mapPackets.splice(index, 1);
+                        return;
+                    }
+
+                    // Calculate path (curved bezier path)
+                    const x1 = packet.from.x * w;
+                    const y1 = packet.from.y * h;
+                    const x2 = packet.to.x * w;
+                    const y2 = packet.to.y * h;
+                    
+                    // Control point coordinates for Bezier curve (adds a nice cyber arc)
+                    const cx = (x1 + x2) / 2;
+                    const cy = Math.min(y1, y2) - 40; // curve upwards
+
+                    // Get point on Bezier curve
+                    const t = packet.progress;
+                    const px = (1 - t) * (1 - t) * x1 + 2 * (1 - t) * t * cx + t * t * x2;
+                    const py = (1 - t) * (1 - t) * y1 + 2 * (1 - t) * t * cy + t * t * y2;
+
+                    // Update coords text overlay
+                    if (index === 0) {
+                        const approxLat = (packet.from.lat.split(' ')[0] * (1 - t) + packet.to.lat.split(' ')[0] * t).toFixed(4);
+                        const approxLon = (packet.from.lon.split(' ')[0] * (1 - t) + packet.to.lon.split(' ')[0] * t).toFixed(4);
+                        mapCoordsEl.textContent = `SRC: ${packet.from.name.substring(0, 3)} | TRG: ${packet.to.name.substring(0, 3)} | RATIO: ${approxLat} / ${approxLon}`;
+                    }
+
+                    // Draw packet trail
+                    mapCtx.strokeStyle = packet.color;
+                    mapCtx.lineWidth = 1;
+                    mapCtx.setLineDash([2, 5]);
+                    mapCtx.beginPath();
+                    mapCtx.moveTo(x1, y1);
+                    mapCtx.quadraticCurveTo(cx, cy, x2, y2);
+                    mapCtx.stroke();
+                    mapCtx.setLineDash([]); // clear dash
+
+                    // Draw moving head
+                    mapCtx.fillStyle = packet.color;
+                    mapCtx.beginPath();
+                    mapCtx.arc(px, py, 3, 0, Math.PI * 2);
+                    mapCtx.fill();
+
+                    // Glow particle around moving head
+                    mapCtx.shadowColor = packet.color;
+                    mapCtx.shadowBlur = 6;
+                    mapCtx.beginPath();
+                    mapCtx.arc(px, py, 5, 0, Math.PI * 2);
+                    mapCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                    mapCtx.fill();
+                    mapCtx.shadowBlur = 0; // reset
+                });
+            }
+
+            // Launch threat packet simulator
+            function launchPacket() {
+                if (mapPackets.length > 5) return; // limit active packets
+                
+                const fromIdx = Math.floor(Math.random() * cities.length);
+                let toIdx = Math.floor(Math.random() * cities.length);
+                while (toIdx === fromIdx) {
+                    toIdx = Math.floor(Math.random() * cities.length);
+                }
+
+                const colors = ['#ff3838', '#ffb300', '#00e5ff', '#39ff14'];
+                const randColor = colors[Math.floor(Math.random() * colors.length)];
+
+                mapPackets.push({
+                    from: cities[fromIdx],
+                    to: cities[toIdx],
+                    progress: 0,
+                    speed: 0.005 + Math.random() * 0.008,
+                    color: randColor
+                });
+            }
+
+            // Map render loop
+            function mapLoop() {
+                mapCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+                drawMapBackground();
+                updateAndDrawMapElements();
+                
+                // Random launches
+                if (Math.random() < 0.007) {
+                    launchPacket();
+                }
+
+                requestAnimationFrame(mapLoop);
+            }
+            mapLoop();
+
+            // ----------------------------------------------------
+            // 6. Live Log Stream Generator
+            // ----------------------------------------------------
+            const logsContainer = document.getElementById('terminal-tab-logs');
+
+            function logToTerminal(severity, msg) {
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                
+                const now = new Date();
+                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}.${(now.getMilliseconds() / 10).toFixed(0).padStart(2, '0')}`;
+                
+                let sevSpanClass = '';
+                switch (severity.toUpperCase()) {
+                    case 'INFO': sevSpanClass = 'log-entry-info'; break;
+                    case 'WARN': sevSpanClass = 'log-entry-warn'; break;
+                    case 'ALERT': sevSpanClass = 'log-entry-alert'; break;
+                    case 'OK': sevSpanClass = 'log-entry-ok'; break;
+                }
+
+                entry.innerHTML = `
+                    <span class="log-entry-time">[${timeString}]</span> 
+                    <span class="${sevSpanClass}">[${severity}]</span> 
+                    <span>${msg}</span>
+                `;
+
+                logsContainer.appendChild(entry);
+                
+                // Limit list to 50 logs
+                while (logsContainer.children.length > 50) {
+                    logsContainer.removeChild(logsContainer.firstChild);
+                }
+
+                // Autoscroll
+                logsContainer.scrollTop = logsContainer.scrollHeight;
+            }
+
+            // Initial logs
+            setTimeout(() => logToTerminal("OK", "Threat interface kernel initialized. Data streams established."), 500);
+            setTimeout(() => logToTerminal("INFO", "Listening for socket connections from threat nodes..."), 1200);
+            setTimeout(() => logToTerminal("INFO", "NVD Database feed synced successfully. Parsing definitions..."), 2000);
+
+            // Periodic mock threats
+            const mockAttackLogPrompts = [
+                { s: "WARN", m: "Blocked unauthorized login request on port 22 (SSH) from IP: 203.0.113.195." },
+                { s: "WARN", m: "Intrusion threat: Brute force password guessing detected on root account from IP: 198.51.100.8." },
+                { s: "ALERT", m: "SQL Injection probe detected in parameter 'id' on path '/api/v1/search' from IP: 91.240.118.2." },
+                { s: "INFO", m: "Database backup scheduler task executed. Transmitted archived log logs to Frankfurt SOC." },
+                { s: "OK", m: "Threat mitigation signature DB updated to database version 451.29." },
+                { s: "WARN", m: "Suspected system footprinting scan detected. Source IP: 192.0.2.14 targeting ports: 80, 443, 8080." }
+            ];
+
+            setInterval(() => {
+                // Only spawn log if user is not in screen saver or active scan
+                if (!matrixActive && !cliScanning) {
+                    const idx = Math.floor(Math.random() * mockAttackLogPrompts.length);
+                    const prompt = mockAttackLogPrompts[idx];
+                    logToTerminal(prompt.s, prompt.m);
+                }
+            }, 5000);
+
+            // ----------------------------------------------------
+            // 7. Interactive Security CLI Emulation
+            // ----------------------------------------------------
+            let cliTheme = 'green';
+            let cliScanning = false;
+
+            function outputCliText(text) {
+                cliOutput.textContent += text + "\n";
+                // Autoscroll
+                const tabArea = document.getElementById('terminal-tab-cli');
+                tabArea.scrollTop = tabArea.scrollHeight;
+            }
+
+            cliInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    const fullCommand = cliInput.value.trim();
+                    cliInput.value = '';
+                    
+                    if (fullCommand === '') return;
+
+                    outputCliText(`visitor@bayler-sec:~$ ${fullCommand}`);
+
+                    // Parse arguments
+                    const tokens = fullCommand.split(' ');
+                    const cmd = tokens[0].toLowerCase();
+                    const args = tokens.slice(1);
+
+                    if (cliScanning) {
+                        outputCliText("ALERT: System diagnostic in progress. Await process resolution.");
+                        return;
+                    }
+
+                    handleCliCommand(cmd, args);
+                }
+            });
+
+            function handleCliCommand(cmd, args) {
+                switch (cmd) {
+                    case 'help':
+                        outputCliText(`Available Diagnostic Commands:
+  help           Display this diagnostic assistance index.
+  status         Check system firewall and alert dashboard status metrics.
+  cves           Print details of the last 10 ingested vulnerabilities.
+  cve [ID]       Show metadata for a specific CVE vulnerability.
+  scan [IP]      Run an intrusion scan simulator on the specified host.
+  decrypt        Launch cryptographic deciphering module (Mini-game).
+  matrix         Activate visual CRT matrix rain screen-saver overlay.
+  theme          Toggle terminal text coloring. (green/amber/cyan)
+  clear          Purge terminal history buffer.
+`);
+                        break;
+                    case 'status':
+                        outputCliText(`BAYLER-SEC SECURITY LOGS METRICS:
+  Host Status:        ONLINE (Active uptime: 24h 15m)
+  Security Firewalls: ACTIVE (Blocking all unauthorized incoming rules)
+  API Sync Level:     STABLE (CIRCL.LU synchronized 10m ago)
+  Core Temp:          42°C (Optimal cooling bounds)
+  Threat Tier:        LEVEL 3 (Elevated risks due to active scanning campaigns)
+`);
+                        break;
+                    case 'cves':
+                        if (rawCVEs.length === 0) {
+                            outputCliText("No ingested CVE records in buffer. Attempting api update...");
+                            break;
+                        }
+                        let cveSum = "Ingested Vulnerabilities Summary (Latest 10):\n";
+                        rawCVEs.slice(0, 10).forEach(c => {
+                            cveSum += `  * ${c.id} - ${c.severity.toUpperCase()} (CVSS ${c.score})\n`;
+                        });
+                        outputCliText(cveSum);
+                        break;
+                    case 'cve':
+                        if (args.length === 0) {
+                            outputCliText("Usage Error: cve [CVE-YYYY-XXXXX]. Try 'cves' to list IDs.");
+                            break;
+                        }
+                        const targetId = args[0].toUpperCase();
+                        const matchingCve = rawCVEs.find(c => c.id === targetId);
+                        if (!matchingCve) {
+                            outputCliText(`System Error: Vulnerability signature '${targetId}' not found in ingested buffers.`);
+                        } else {
+                            outputCliText(`VULNERABILITY SIG DETAILS:
+  Identifier:    ${matchingCve.id}
+  CVSS Score:    ${matchingCve.score}
+  Severity:      ${matchingCve.severity.toUpperCase()}
+  Vector String: ${matchingCve.vector}
+  Description:   ${matchingCve.desc}
+`);
+                        }
+                        break;
+                    case 'scan':
+                        if (args.length === 0) {
+                            outputCliText("Usage Error: scan [TARGET_IP_OR_HOSTNAME]. Example: scan 192.168.1.1");
+                            break;
+                        }
+                        const host = args[0];
+                        cliScanning = true;
+                        outputCliText(`[+] Initiating deep network scan probe on host: ${host}`);
+                        
+                        let step = 0;
+                        const scanSteps = [
+                            `[+] Querying host DNS records and route map...`,
+                            `[+] Port 22 (SSH)  - OPEN  (OpenSSH 8.2p1 - Outdated vector candidate)`,
+                            `[+] Port 80 (HTTP) - OPEN  (Apache HTTPD 2.4.41 - Static service)`,
+                            `[+] Port 443 (HTTPS)- OPEN  (TLS 1.2 configured. SSL Certificate Valid)`,
+                            `[+] Port 3306 (SQL) - CLOSED (Firewall blocked connection)`,
+                            `[!] WARNING: Detected outdated daemon version OpenSSH 8.2p1 (Candidate: CVE-2020-15778).`,
+                            `[+] Intrusion scan on host ${host} finalized. Diagnostics complete.`
+                        ];
+
+                        const interval = setInterval(() => {
+                            outputCliText(scanSteps[step]);
+                            step++;
+                            if (step >= scanSteps.length) {
+                                clearInterval(interval);
+                                cliScanning = false;
+                            }
+                        }, 800);
+                        break;
+                    case 'decrypt':
+                        outputCliText("[+] Initializing Cryptographic Decipher Module...");
+                        cliScanning = true;
+                        
+                        let decWord = "BAYLER_SEC_SECURE_AUTH";
+                        let decAttempt = decWord.split('').map(() => '#');
+                        outputCliText(`Target Signature Hash: [ ${decAttempt.join('')} ]`);
+
+                        let idx = 0;
+                        const decInterval = setInterval(() => {
+                            decAttempt[idx] = decWord[idx];
+                            outputCliText(`Deciphering... block ${idx+1}: [ ${decAttempt.join('')} ]`);
+                            idx++;
+                            
+                            if (idx >= decWord.length) {
+                                clearInterval(decInterval);
+                                outputCliText("[+] KEY DECIPHERED SUCCESSFULLY: Authorization status validated.");
+                                cliScanning = false;
+                            }
+                        }, 250);
+                        break;
+                    case 'theme':
+                        const themes = ['green', 'amber', 'cyan'];
+                        const curIdx = themes.indexOf(cliTheme);
+                        cliTheme = themes[(curIdx + 1) % themes.length];
+                        
+                        // Apply classes
+                        cliInput.style.color = `var(--cyber-${cliTheme})`;
+                        cliOutput.style.color = `var(--cyber-${cliTheme})`;
+                        outputCliText(`Terminal visual schema toggled: [ ${cliTheme.toUpperCase()} ]`);
+                        break;
+                    case 'matrix':
+                        startMatrixRain();
+                        break;
+                    case 'clear':
+                        cliOutput.textContent = '';
+                        break;
+                    default:
+                        outputCliText(`Command not recognized: '${cmd}'. Type 'help' to review available diagnostic utilities.`);
+                }
+            }
+
+            // ----------------------------------------------------
+            // 8. Matrix Digital Rain Screen Saver
+            // ----------------------------------------------------
+            const matrixCanvas = document.getElementById('matrixRain');
+            const matrixCtx = matrixCanvas.getContext('2d');
+            let matrixActive = false;
+            let matrixIntervalId = null;
+
+            function startMatrixRain() {
+                matrixActive = true;
+                matrixCanvas.classList.add('active');
+                
+                // Adjust sizing
+                const parent = matrixCanvas.parentElement;
+                matrixCanvas.width = parent.clientWidth;
+                matrixCanvas.height = parent.clientHeight;
+
+                const columns = Math.floor(matrixCanvas.width / 14);
+                const drops = Array(columns).fill(1);
+                
+                // Char set
+                const chars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$*&%".split("");
+
+                function draw() {
+                    matrixCtx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                    matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+                    matrixCtx.fillStyle = `var(--cyber-${cliTheme})`;
+                    matrixCtx.font = "12px monospace";
+
+                    for (let i = 0; i < drops.length; i++) {
+                        const text = chars[Math.floor(Math.random() * chars.length)];
+                        matrixCtx.fillText(text, i * 14, drops[i] * 14);
+
+                        if (drops[i] * 14 > matrixCanvas.height && Math.random() > 0.975) {
+                            drops[i] = 0;
+                        }
+                        drops[i]++;
+                    }
+                }
+
+                matrixIntervalId = setInterval(draw, 33);
+            }
+
+            function stopMatrixRain() {
+                if (!matrixActive) return;
+                clearInterval(matrixIntervalId);
+                matrixCanvas.classList.remove('active');
+                matrixActive = false;
+                outputCliText("[+] Matrix Screen Saver Deactivated. Resuming CLI stream.");
+                cliInput.focus();
+            }
+
+            // Stop matrix when clicking canvas
+            matrixCanvas.addEventListener('click', stopMatrixRain);
+            
+            // Stop matrix when keyboard is pressed while input is focused
+            cliInput.addEventListener('keydown', function () {
+                if (matrixActive) {
+                    stopMatrixRain();
+                }
+            });
+
+            // ----------------------------------------------------
+            // 9. Simulation Fallback Dataset
+            // ----------------------------------------------------
+            function getSimulationCVEs() {
+                return [
+                    {
+                        id: "CVE-2026-44021",
+                        severity: "Critical",
+                        score: "9.8",
+                        desc: "Remote Code Execution vulnerability in Kernel System Ingress Daemon. Allows unauthenticated access via buffer overflow protocols.",
+                        vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                        link: "https://nvd.nist.gov/vuln/detail/CVE-2026-44021"
+                    },
+                    {
+                        id: "CVE-2026-31994",
+                        severity: "High",
+                        score: "8.1",
+                        desc: "Memory boundary out-of-bounds read error in Core Gateway Router TLS library. Permits active decryption of session tokens.",
+                        vector: "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:N/A:N",
+                        link: "https://nvd.nist.gov/vuln/detail/CVE-2026-31994"
+                    },
+                    {
+                        id: "CVE-2026-27150",
+                        severity: "High",
+                        score: "7.8",
+                        desc: "Privilege escalation vulnerability in IAM Identity Registry module. Local admin privileges can be spoofed by altering credentials headers.",
+                        vector: "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+                        link: "https://nvd.nist.gov/vuln/detail/CVE-2026-27150"
+                    },
+                    {
+                        id: "CVE-2026-11843",
+                        severity: "Medium",
+                        score: "6.5",
+                        desc: "Cross-site scripting (XSS) exploit signature in Dashboard template charts module. Prompts unauthorized cookie ingestion bypasses.",
+                        vector: "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:L/A:N",
+                        link: "https://nvd.nist.gov/vuln/detail/CVE-2026-11843"
+                    },
+                    {
+                        id: "CVE-2026-09228",
+                        severity: "Low",
+                        score: "3.7",
+                        desc: "Denial of service vector via thread blocking triggers in system status daemon. Leads to minimal packet latency increments.",
+                        vector: "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:L",
+                        link: "https://nvd.nist.gov/vuln/detail/CVE-2026-09228"
+                    }
+                ];
+            }
+
+            // Start Ingest Feed
             fetchThreatData();
         });
     </script>
